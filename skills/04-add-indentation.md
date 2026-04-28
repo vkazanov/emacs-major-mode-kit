@@ -71,6 +71,7 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: indentation tests pass and the mode byte-compiles.

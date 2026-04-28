@@ -32,6 +32,9 @@ features depend on syntax state.
 - Record comment and string delimiters in the facts file when they are language facts.
 - Include exact syntax recipes for common C-style line comments, block comments,
   double-quoted strings, and backslash quoting when the language uses them.
+- When the language has multiple line comment delimiters, include every delimiter
+  that can be modeled by a syntax table and leave command-level opener selection to
+  `02-add-comments.md`.
 - Keep behavior limited to syntax state; do not add comment command variables,
   highlighting, indentation, or imenu here.
 
@@ -48,15 +51,25 @@ features depend on syntax state.
    (modify-syntax-entry ?\n "> b" table)
    ```
 
-4. For double-quoted strings and backslash quoting, use this recipe:
+4. For languages that also have a single-character line comment opener such as `#`,
+   add that opener to the same comment style:
+
+   ```elisp
+   (modify-syntax-entry ?# "< b" table)
+   ```
+
+   If a delimiter cannot be modeled reliably with syntax table entries, record the
+   fact and defer the case to `15-add-syntax-propertize.md`.
+
+5. For double-quoted strings and backslash quoting, use this recipe:
 
    ```elisp
    (modify-syntax-entry ?\" "\"" table)
    (modify-syntax-entry ?\\ "\\" table)
    ```
 
-5. Add tests that place point inside representative comments and strings.
-6. Run validation before applying the next skill.
+6. Add tests that place point inside representative comments and strings.
+7. Run validation before applying the next skill.
 
 ## Tests
 
@@ -78,6 +91,7 @@ features depend on syntax state.
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: syntax tests pass and the mode byte-compiles.

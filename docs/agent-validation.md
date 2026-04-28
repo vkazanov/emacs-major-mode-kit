@@ -48,12 +48,13 @@ indentation, and imenu. Run validation after each skill, inline the facts file d
 skill 17, and clean bytecode at the end.
 ```
 
-Accept the result only if both commands pass:
+Accept the result only if all commands pass:
 
 ```sh
 make test MODE_DIR=examples/mini-hcl-mode MODE=mini-hcl
 make compile MODE_DIR=examples/mini-hcl-mode MODE=mini-hcl
-make clean
+make polish-check MODE_DIR=examples/mini-hcl-mode MODE=mini-hcl
+make clean MODE_DIR=examples/mini-hcl-mode
 ```
 
 ## Real-Language Targets
@@ -69,6 +70,26 @@ language support.
 - SQL DDL subset: `MODE=mini-sql`, `EXT=sql`; comments `--` and `/* */`; single-quoted
   strings; keyword highlighting; imenu for `CREATE TABLE name`; simple continuation or
   zero indentation. This checks a non-brace shape.
+
+## Advanced Feature Prompt Shape
+
+Use this compact shape when testing later optional skills. Replace placeholders with
+real language facts; do not invent tools, grammars, or command output.
+
+```text
+Extend MODE_DIR for LANGNAME by applying skills 11 and 16 in ascending order, then
+skill 17. The mode is already polished, so update the inlined LANG-facts constant and
+do not recreate a runtime LANG-facts.el file.
+
+Language facts:
+- diagnostics: TOOL command, representative output, and severity mapping
+- tree-sitter: grammar language symbol, query needs, and opt-in LANG-ts-mode policy
+
+Add ERT tests that stub executable-find and tree-sitter readiness/setup functions.
+The missing diagnostic tool path must call REPORT-FN with no diagnostics and must not
+start a process. Run make test, make compile, and make clean with MODE_DIR and MODE
+after each applied skill; after skill 17, also run make polish-check.
+```
 
 ## Acceptance Checklist
 
@@ -87,7 +108,8 @@ Record results with this template:
 - Validation after each skill:
 - Final `make test`:
 - Final `make compile`:
-- `make clean` run:
+- Final `make polish-check`:
+- `make clean MODE_DIR=...` run:
 - Facts file inlined:
 - Unrelated edits:
 - Notes:
@@ -96,4 +118,4 @@ Record results with this template:
 The trial passes when the agent reads the instructions, opens the relevant skill files,
 keeps `EXT` bare, edits only the generated files, avoids external dependencies and
 global keybindings, inlines the final facts file into the mode file, and produces
-passing tests and byte compilation.
+passing tests, byte compilation, and polish checks.

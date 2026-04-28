@@ -4,7 +4,7 @@
 
 Add optional Flymake diagnostics backed by a language checker, compiler, or linter.
 The backend should run asynchronously, report diagnostics through Flymake, and do
-nothing when the external tool is unavailable.
+no external process work when the tool is unavailable.
 
 ## When to use
 
@@ -39,6 +39,9 @@ diagnostic tool or compiler output format for the language.
 - Add the backend to `flymake-diagnostic-functions` buffer-locally inside
   `define-derived-mode`.
 - Check tools with `executable-find` when the backend runs; never run on load.
+- If `executable-find` reports that the optional tool is unavailable, call
+  `REPORT-FN` with an empty diagnostic list and return promptly without starting a
+  process.
 - Return quickly from the backend and use `make-process` for external diagnostics.
 - Keep a buffer-local process variable and cancel any previous live process before
   starting a new one.
@@ -59,8 +62,10 @@ diagnostic tool or compiler output format for the language.
    objects for the current buffer.
 5. Implement `LANG-flymake-backend` with the Flymake `REPORT-FN` argument and ignored
    keyword arguments.
-6. In the backend, check `executable-find`, cancel the previous process, start a new
-   asynchronous `make-process`, and report only non-stale results.
+6. In the backend, check `executable-find`. When the tool is unavailable, call
+   `REPORT-FN` with `nil` and do not start a process. Otherwise cancel the previous
+   process, start a new asynchronous `make-process`, and report only non-stale
+   results.
 7. In `define-derived-mode`, add the backend with a buffer-local `add-hook` call.
 8. Add parser and backend tests, then run validation before applying the next skill.
 
@@ -68,7 +73,8 @@ diagnostic tool or compiler output format for the language.
 
 - Test diagnostic parsing directly with fixture output from the checker.
 - Test conversion to `flymake-make-diagnostic` objects for warning and error cases.
-- Test that the backend returns promptly when `executable-find` reports no tool.
+- Test that the backend calls `REPORT-FN` with no diagnostics and returns promptly
+  when `executable-find` reports no tool.
 - Test cancellation or stale process handling with a stubbed process path when practical.
 - Do not require the real external checker to be installed for ERT tests.
 
@@ -86,6 +92,7 @@ diagnostic tool or compiler output format for the language.
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: Flymake parser and backend tests pass and the mode byte-compiles.

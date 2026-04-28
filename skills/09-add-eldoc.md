@@ -80,6 +80,7 @@ enough static metadata to derive short documentation.
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: Eldoc tests pass and the mode byte-compiles.

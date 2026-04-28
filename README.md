@@ -21,7 +21,7 @@ intake document.
 ## Repository Layout
 
 ```text
-minimal-mode-kit/
+emacs-major-mode-kit/
   AGENTS.md
   README.md
   Makefile
@@ -62,7 +62,7 @@ minimal-mode-kit/
         imenu.toy
 ```
 
-## Practical quickstart
+## Create a Mode
 
 1. Copy or instantiate the three templates for your language:
    `templates/lang-mode.el`, `templates/lang-mode-test.el`, and
@@ -73,12 +73,17 @@ minimal-mode-kit/
 3. Update the language facts file with reusable language data such as extensions,
    comments, keywords, definitions, indentation style, and optional tools. This file is
    a temporary scaffold for skills `00` through `16`.
-4. Apply one skill document at a time, starting with `skills/00-create-basic-mode.md`
-   and then adding only the next feature you need.
+4. Apply one skill document at a time. If no range is requested, use the default
+   bootstrap range: skills `00` through `05`, followed by final polish skill `17`.
 5. Add or update ERT tests for the behavior introduced by that skill.
 6. Run validation before moving to the next skill.
 7. Always finish with `skills/17-polish-package.md`, which inlines `LANG-facts.el`
    into the main mode file and removes the separate runtime facts file.
+
+Feature ranges are cumulative: `00-10` means apply every skill from `00` through
+`10` in numeric order. Feature lists are sparse and explicit: `00-05,08,10` means
+apply only those selected skills, still in ascending numeric order. Skill `17` is
+always the final wrap-up unless it is already part of the requested range.
 
 The toy example applies skills `00` through `05`: basic mode, syntax table, comments,
 font-lock, indentation, and imenu. It also applies skill `17`, so its language facts
@@ -105,6 +110,8 @@ By default, the root `Makefile` validates the toy example:
 ```sh
 make test
 make compile
+make polish-check
+make clean
 ```
 
 Generated modes can use the same targets by passing `MODE_DIR` and `MODE`:
@@ -112,7 +119,28 @@ Generated modes can use the same targets by passing `MODE_DIR` and `MODE`:
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make polish-check MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 `MODE_DIR` is the directory containing the generated mode, and `MODE` is the language
 prefix used in filenames such as `foo-mode.el` and `foo-mode-test.el`.
+
+`make compile` byte-compiles runtime files matching `$(MODE_DIR)/$(MODE)-*.el`,
+excluding `$(MODE)-mode-test.el`. This includes optional files such as
+`foo-ts-mode.el` and temporary files such as `foo-facts.el` before final polish.
+`make polish-check` runs package metadata checks against the same runtime files, and
+`make clean` removes byte-compiled files only under `MODE_DIR`.
+
+When both Emacs 29 and Emacs 30 are available, run the same validation with each
+binary:
+
+```sh
+make test EMACS=emacs-29 MODE_DIR=path/to/mode MODE=foo
+make compile EMACS=emacs-29 MODE_DIR=path/to/mode MODE=foo
+make test EMACS=emacs-30 MODE_DIR=path/to/mode MODE=foo
+make compile EMACS=emacs-30 MODE_DIR=path/to/mode MODE=foo
+```
+
+If one version is not installed locally, record that gap in the validation notes
+instead of inventing a result.

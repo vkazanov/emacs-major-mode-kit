@@ -124,9 +124,9 @@ Do not remove or rename the generated regex/basic mode file.
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
-make clean
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: the regex/basic mode tests keep passing, tree-sitter mode tests pass
-without requiring an installed grammar, the regex/basic mode byte-compiles, and no
-generated `.elc` files remain after cleanup.
+without requiring an installed grammar, all generated runtime Lisp files
+byte-compile, and no generated `.elc` files remain after cleanup.

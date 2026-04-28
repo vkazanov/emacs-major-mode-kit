@@ -82,6 +82,7 @@ definition regexp, such as a one-line function, type, section, or block declarat
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: defun navigation tests pass and the mode byte-compiles.

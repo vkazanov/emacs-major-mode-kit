@@ -8,21 +8,27 @@ When asked to create or extend a generated major mode:
 
 1. Read `README.md` for the repository conventions and validation interface.
 2. Complete the language bootstrap intake below for the requested feature range.
-3. Apply skill documents from `skills/` in numeric order, starting with
-   `skills/00-create-basic-mode.md` and ending with the requested feature. Then
-   always apply `skills/17-polish-package.md` as the final wrap-up when it was not
-   already part of the requested range. Before each feature, open and follow the exact
-   skill file for that step.
+3. Apply skill documents from `skills/` in numeric order. A range such as `00-10` is
+   cumulative and includes every skill from `00` through `10`; a list such as
+   `00-05,08,10` is sparse and applies only the selected skills in ascending order.
+   Then always apply `skills/17-polish-package.md` as the final wrap-up when it was
+   not already part of the requested range. Before each feature, open and follow the
+   exact skill file for that step.
 4. Apply only one skill at a time. Do not mix later feature work into an earlier skill.
 5. After each skill, run:
 
    ```sh
    make test MODE_DIR=path/to/mode MODE=foo
    make compile MODE_DIR=path/to/mode MODE=foo
+   make clean MODE_DIR=path/to/mode
    ```
 
-6. Run `make clean` after byte compilation so generated `.elc` files are not left
-   behind.
+6. After skill `17`, also run `make polish-check MODE_DIR=path/to/mode MODE=foo`.
+
+When extending an already-polished generated mode, do not recreate a runtime
+`LANG-facts.el` file. Treat the inlined `LANG-facts` constant in `LANG-mode.el` as
+the facts source, update it there, apply only the missing requested skills in order,
+and keep the final package free of a separate `LANG-facts` runtime file.
 
 ## Language Bootstrap Intake
 
@@ -37,8 +43,8 @@ Required for every generated mode:
 - `EXT`: bare file extension, such as `foo`, never `.foo`.
 - `MODE_DIR`: generated mode directory, such as `examples/foo-mode`.
 - Requested feature range or feature list, such as `00-05`, `00-10`, or `00-17`.
-  Skill `17` is always the final wrap-up even when the requested feature range stops
-  earlier.
+  Ranges are cumulative; lists are sparse and explicit; skill `17` is always the
+  final wrap-up even when the requested feature range stops earlier.
 
 Core facts for skills `00` through `05`:
 
@@ -120,8 +126,9 @@ Language facts:
 Add samples and ERT tests for every applied feature. Run validation after each skill:
 make test MODE_DIR=MODE_DIR MODE=LANG
 make compile MODE_DIR=MODE_DIR MODE=LANG
-Run make clean after byte compilation so no .elc files remain. After skill 17, the
-final package must not require or ship a separate LANG-facts.el runtime file.
+Run make clean MODE_DIR=MODE_DIR after byte compilation so no .elc files remain.
+After skill 17, run make polish-check MODE_DIR=MODE_DIR MODE=LANG. The final package
+must not require or ship a separate LANG-facts.el runtime file.
 ```
 
 ## Edit Boundaries
@@ -140,6 +147,7 @@ For this repository itself, keep changes scoped to the requested task.
 3. Do not add external package dependencies.
 4. Do not rewrite unrelated features.
 5. Update the language facts file when adding language knowledge before skill `17`.
+   For already-polished modes, update the inlined `LANG-facts` constant instead.
 6. Add or update ERT tests for every feature.
 7. Prefer conservative behavior over clever behavior.
 8. Do not mutate global Emacs state except autoloaded `auto-mode-alist` registration.
@@ -150,12 +158,16 @@ For this repository itself, keep changes scoped to the requested task.
 
 ## Completion Criteria
 
-A feature is complete only when both under emacs 29 and emacs 30:
+A feature is complete only when, under both Emacs 29 and Emacs 30 where available:
 
 - the mode byte-compiles,
 - relevant ERT tests pass,
 - the feature is wired into `define-derived-mode`,
 - the code is idiomatic and small.
+
+Use `EMACS=emacs-29` and `EMACS=emacs-30` with the validation targets when both
+binaries are installed. If one binary is unavailable in the current environment,
+record that gap explicitly in the validation notes.
 
 A generated mode is complete for a requested feature range only when every requested
 feature skill has been applied in order, skill `17` has inlined the accumulated facts

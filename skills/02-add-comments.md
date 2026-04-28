@@ -31,8 +31,10 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 ## Requirements
 
 - Set comment variables buffer-locally inside `define-derived-mode`.
-- Set `comment-start` to the normal line comment opener plus a trailing space when
-  appropriate, such as `"// "`.
+- Set `comment-start` to the primary line comment opener plus a trailing space when
+  appropriate, such as `"// "`. If the language has multiple line comment openers,
+  use the documented primary opener from the facts file or the first line opener
+  supplied by the user.
 - Set `comment-end` to `""` for line comments.
 - Set `comment-start-skip` to match the language's supported comment openers.
 - Set `comment-use-syntax` when syntax table state should guide comment commands.
@@ -50,8 +52,16 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
    "\\(?://+\\|/\\*+\\)\\s *"
    ```
 
-4. Add tests for the configured variables and at least one built-in comment command.
-5. Run validation before applying the next skill.
+4. For languages with `#`, `//`, and `/* */` comments, keep `comment-start` on the
+   primary line opener, such as `"# "` or `"// "`, and match every opener in
+   `comment-start-skip`:
+
+   ```elisp
+   "\\(?:#+\\|//+\\|/\\*+\\)\\s *"
+   ```
+
+5. Add tests for the configured variables and at least one built-in comment command.
+6. Run validation before applying the next skill.
 
 ## Tests
 
@@ -74,6 +84,7 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: comment command tests pass and the mode byte-compiles.

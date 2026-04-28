@@ -77,6 +77,7 @@ imenu, diagnostics, navigation backends, parser variants, commands, or tool inte
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: the basic ERT test passes and the mode byte-compiles.

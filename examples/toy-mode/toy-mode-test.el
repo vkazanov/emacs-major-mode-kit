@@ -52,6 +52,18 @@
     (should (nth 3 (syntax-ppss)))
     (should-not (nth 4 (syntax-ppss)))))
 
+(ert-deftest toy-mode-comment-variables-test ()
+  (toy-test--with-buffer ""
+    (should (equal comment-start "// "))
+    (should (equal comment-end ""))
+    (should (equal comment-start-skip "\\(?://+\\|/\\*+\\)\\s *"))
+    (should comment-use-syntax)))
+
+(ert-deftest toy-mode-comment-region-test ()
+  (toy-test--with-buffer "let value = 1;\n"
+    (comment-region (point-min) (line-end-position))
+    (should (equal (buffer-string) "// let value = 1;\n"))))
+
 (ert-deftest toy-mode-keyword-face-test ()
   (toy-test--with-buffer "func main() {\n  if ready {\n    return;\n  }\n}\n"
     (should (toy-test--face-matches-p
@@ -90,6 +102,9 @@
     (let ((index (imenu--make-index-alist)))
       (should (assoc "main" index))
       (should (assoc "helper" index)))))
+
+(ert-deftest toy-mode-auto-mode-alist-test ()
+  (should (eq (cdr (assoc "\\.toy\\'" auto-mode-alist)) 'toy-mode)))
 
 (provide 'toy-mode-test)
 

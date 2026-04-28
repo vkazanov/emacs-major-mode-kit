@@ -80,6 +80,7 @@ that users should be able to invoke from the major mode.
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: run command tests pass and the mode byte-compiles.

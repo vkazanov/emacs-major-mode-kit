@@ -104,6 +104,7 @@ sufficient.
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: syntax propertize tests pass, existing syntax table tests keep

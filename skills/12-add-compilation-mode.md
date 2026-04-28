@@ -85,6 +85,7 @@ contains file, line, column, warning, or error locations.
 ```sh
 make test MODE_DIR=path/to/mode MODE=foo
 make compile MODE_DIR=path/to/mode MODE=foo
+make clean MODE_DIR=path/to/mode
 ```
 
 Expected result: compilation regexp and command tests pass and the mode byte-compiles.

@@ -1,14 +1,15 @@
 EMACS ?= emacs
 MODE_DIR ?= examples/toy-mode
 MODE ?= toy
-TEST_FILE := $(MODE_DIR)/$(MODE)-mode-test.el
-MODE_RUNTIME_FILES := $(sort $(filter-out $(TEST_FILE),$(wildcard $(MODE_DIR)/$(MODE)-*.el)))
+TEST_FILES := $(sort $(wildcard $(MODE_DIR)/*-test.el))
+TEST_LOAD_ARGS := $(foreach file,$(TEST_FILES),-l $(file))
+MODE_RUNTIME_FILES := $(sort $(filter-out $(TEST_FILES),$(wildcard $(MODE_DIR)/$(MODE)-*.el)))
 
 .PHONY: test compile polish-check validate validate-polished clean
 
 test:
 	$(EMACS) -Q --batch -L $(MODE_DIR) \
-	  -l $(TEST_FILE) \
+	  $(TEST_LOAD_ARGS) \
 	  -f ert-run-tests-batch-and-exit
 
 compile:

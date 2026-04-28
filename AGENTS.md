@@ -84,8 +84,8 @@ Core facts for skills `00` through `05`:
 - Keywords: reserved words that should receive keyword highlighting.
 - Builtins: known builtin names that should receive builtin highlighting.
 - Definitions: simple forms to index or highlight, including the displayed name.
-- Indentation: zero, brace-based, indentation-sensitive, continuation-based, or other
-  conservative rule, plus offset.
+- Indentation: zero, brace-based, continuation-based, indentation-sensitive,
+  choice-depth, or other conservative rule, plus offset.
 - Samples: small valid snippets that exercise comments, strings, definitions,
   highlighting, indentation, and imenu.
 
@@ -180,7 +180,7 @@ The final package must not require or ship a separate LANG-facts.el runtime file
 ## Edit Boundaries
 
 For generated modes, edit only the generated mode file, optional generated
-tree-sitter mode file, test file, facts source, sample files, and package-local
+tree-sitter mode file, test files, facts source, sample files, and package-local
 reference/source notes unless the user explicitly asks for repository-level changes.
 Skill `17` may delete the temporary facts file after inlining it into the generated
 mode.

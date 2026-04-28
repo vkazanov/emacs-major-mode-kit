@@ -19,7 +19,8 @@ applied with no-op missing-grammar behavior.
 ## Allowed files
 
 - New generated tree-sitter mode file, such as `foo-ts-mode.el`.
-- Generated test file, such as `foo-mode-test.el`.
+- Generated test files, such as `foo-mode-test.el` and optional
+  `foo-ts-mode-test.el`.
 - Facts source when tree-sitter language, query, indentation, imenu, or defun
   facts need to be recorded.
 - Sample files used by tree-sitter tests.
@@ -95,8 +96,9 @@ Do not remove or rename the generated regex/basic mode file.
 
 ## Tests
 
-- Require `LANG-ts-mode` from the generated test file because the root `Makefile`
-  loads `LANG-mode-test.el`.
+- Put tree-sitter-specific tests in `LANG-ts-mode-test.el` when that keeps the base
+  mode tests smaller. The root `Makefile` loads every `*-test.el` file in
+  `MODE_DIR`.
 - Test the unavailable grammar path by stubbing `treesit-ready-p` to return nil.
   Enabling `LANG-ts-mode` should succeed, derive from both `LANG-ts-mode` and
   `LANG-mode`, and not call `treesit-parser-create` or `treesit-major-mode-setup`.

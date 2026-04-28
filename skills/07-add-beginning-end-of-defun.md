@@ -26,6 +26,8 @@ definition regexp, such as a one-line function, type, section, or block declarat
 - `syntax-ppss`
 - `re-search-backward`
 - `re-search-forward`
+- `forward-line`
+- `beginning-of-line`
 - `setq-local`
 - `ert-deftest`
 
@@ -41,17 +43,21 @@ definition regexp, such as a one-line function, type, section, or block declarat
 - The end function takes no arguments and is called after point has been moved to the
   beginning of a defun.
 - Skip candidate definition matches inside strings or comments using `syntax-ppss`.
-- Prefer small regexp and search helpers based on existing definition facts.
+- Prefer the small `re-search-backward` / `re-search-forward` helper recipe from the
+  snippet over open-coded point, `bobp`, or `bolp` loops.
+- On successful beginning searches, move to the beginning of the matched definition
+  line and return non-nil. On failure, leave point where the failed search stops and
+  return nil.
 
 ## Steps
 
 1. Add or confirm the definition regexp and name capture in the facts source.
 2. For reusable syntax-aware definition scanning, adapt
    `templates/snippets/07-definition-scanning.md`.
-3. Implement a helper that searches for definition starts and rejects matches where
-   `(syntax-ppss)` reports a string or comment.
+3. Implement a helper that searches for definition starts in a direction and rejects
+   matches where `(syntax-ppss)` reports a string or comment.
 4. Implement `LANG-beginning-of-defun` with support for positive, nil, and negative
-   arguments.
+   arguments by repeating the helper search for the requested count.
 5. Implement `LANG-end-of-defun` only if needed; keep it conservative and based on the
    next definition start, a closing delimiter, or the end of buffer.
 6. In `define-derived-mode`, set `beginning-of-defun-function` and optional

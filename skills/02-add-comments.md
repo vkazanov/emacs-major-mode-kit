@@ -25,6 +25,7 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 - `comment-use-syntax`
 - `comment-region`
 - `comment-dwim`
+- `regexp-opt`
 - `setq-local`
 - `ert-deftest`
 
@@ -37,7 +38,14 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
   supplied by the user.
 - Set `comment-end` to `""` for line comments.
 - Set `comment-start-skip` to match the language's supported comment openers.
+- Cover the common delimiter families directly from facts: `//`, `#`, `--`, `;`,
+  `;;`, `/* */`, `<!-- -->`, and documented triple-quote comment/doc delimiters.
 - Set `comment-use-syntax` when syntax table state should guide comment commands.
+- When a delimiter is not yet modeled by syntax state, set `comment-use-syntax` only
+  if tests prove the built-in comment command behaves correctly; otherwise record the
+  syntax gap for skill `15`.
+- If a delimiter is actually a string syntax in the language, such as Python
+  triple-quoted strings, do not treat it as a comment delimiter here.
 - Do not define custom comment commands unless the built-in commands cannot work.
 
 ## Steps
@@ -47,20 +55,13 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
    `templates/snippets/02-comment-variables.md`.
 3. In `define-derived-mode`, set `comment-start`, `comment-end`,
    `comment-start-skip`, and optionally `comment-use-syntax` with `setq-local`.
-4. For languages with `//` line comments and `/* */` block comments, a practical
-   `comment-start-skip` is:
+4. Choose `comment-start` from the primary opener:
 
-   ```elisp
-   "\\(?://+\\|/\\*+\\)\\s *"
-   ```
+   - line comments: `"// "`, `"# "`, `"-- "`, `"; "`, or `";; "`
+   - block-only comments: `"/* "`, `"<!-- "`, or `"\"\"\""` when documented as comments
 
-5. For languages with `#`, `//`, and `/* */` comments, keep `comment-start` on the
-   primary line opener, such as `"# "` or `"// "`, and match every opener in
-   `comment-start-skip`:
-
-   ```elisp
-   "\\(?:#+\\|//+\\|/\\*+\\)\\s *"
-   ```
+5. Build `comment-start-skip` from all supported comment openers, using
+   `regexp-opt` or exact escaped regexps for multi-character delimiters.
 
 6. Add tests for the configured variables and at least one built-in comment command.
 7. Run validation before applying the next skill.

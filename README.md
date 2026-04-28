@@ -128,8 +128,11 @@ make clean MODE_DIR=path/to/mode
 `MODE_DIR` is the directory containing the generated mode, and `MODE` is the language
 prefix used in filenames such as `foo-mode.el` and `foo-mode-test.el`.
 
+`make test` loads every test file matching `$(MODE_DIR)/*-test.el`, so optional
+feature tests can live in files such as `foo-ts-mode-test.el`.
+
 `make compile` byte-compiles runtime files matching `$(MODE_DIR)/$(MODE)-*.el`,
-excluding `$(MODE)-mode-test.el`. This includes optional files such as
+excluding all `$(MODE_DIR)/*-test.el` files. This includes optional files such as
 `foo-ts-mode.el` and temporary files such as `foo-facts.el` before final polish.
 `make polish-check` runs package metadata checks against the same runtime files and
 fails if final polish left a runtime facts file or stale facts feature references.

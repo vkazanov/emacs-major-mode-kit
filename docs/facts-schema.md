@@ -20,7 +20,8 @@ mode are `:language` and `:extensions`.
 - `:keywords`, `:builtins`: static symbol lists for highlighting, completion, and
   documentation.
 - `:definitions`: conservative regexps and capture groups for definitions.
-- `:indentation`: style and offset.
+- `:indentation`: style and offset. Common styles are `zero`, `brace`,
+  `continuation`, `indentation-sensitive`, and `choice-depth`.
 - `:outline`, `:defun`, `:completion`, `:eldoc`, `:xref`: editor service facts.
 - `:diagnostics`, `:compilation`, `:run`, `:formatter`, `:tools`: optional tool facts.
 - `:syntax-propertize`: syntax cases a syntax table cannot model.

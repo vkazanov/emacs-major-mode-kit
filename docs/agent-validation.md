@@ -65,8 +65,8 @@ language support.
   double-quoted strings; brace indentation; imenu for block declarations. This is the
   primary cross-agent trial because it exercises all core skills.
 - SQL DDL subset: `MODE=mini-sql`, `EXT=sql`; comments `--` and `/* */`; single-quoted
-  strings; keyword highlighting; imenu for `CREATE TABLE name`; simple continuation or
-  zero indentation. This checks a non-brace shape.
+  strings; keyword highlighting; imenu for `CREATE TABLE name`; statement-continuation
+  indentation. This checks a non-brace shape.
 
 ## Source-Backed Trial Prompt
 

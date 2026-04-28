@@ -1,0 +1,91 @@
+# Skill: Add Flymake
+
+## Goal
+
+Add optional Flymake diagnostics backed by a language checker, compiler, or linter.
+The backend should run asynchronously, report diagnostics through Flymake, and do
+nothing when the external tool is unavailable.
+
+## When to use
+
+Use after the mode has reliable syntax state and the facts file identifies an external
+diagnostic tool or compiler output format for the language.
+
+## Allowed files
+
+- Generated mode file.
+- Generated test file.
+- Generated facts file when diagnostic tool facts need to be updated.
+- Sample files or diagnostic output fixtures used by Flymake tests.
+
+## Built-in Emacs APIs
+
+- `flymake-diagnostic-functions`
+- `flymake-make-diagnostic`
+- `flymake-mode`
+- `executable-find`
+- `make-process`
+- `process-live-p`
+- `kill-process`
+- `process-buffer`
+- `add-hook`
+- `ert-deftest`
+
+## Requirements
+
+- Require only built-in libraries such as `flymake` and `subr-x` when needed.
+- Store the checker or compiler command in the facts file.
+- Define a language-specific backend such as `LANG-flymake-backend`.
+- Add the backend to `flymake-diagnostic-functions` buffer-locally inside
+  `define-derived-mode`.
+- Check tools with `executable-find` when the backend runs; never run on load.
+- Return quickly from the backend and use `make-process` for external diagnostics.
+- Keep a buffer-local process variable and cancel any previous live process before
+  starting a new one.
+- Ignore stale process output by checking that the process is still the current
+  buffer-local process before calling the Flymake report function.
+- Parse diagnostic output in a separate helper and create diagnostics with
+  `flymake-make-diagnostic`.
+- Do not enable `flymake-mode` automatically unless the user explicitly asks for that
+  behavior in the generated mode.
+
+## Steps
+
+1. Add or confirm tool facts for the checker command and diagnostic output format.
+2. Define a buffer-local variable such as `LANG--flymake-process`.
+3. Implement a parser helper that converts checker output into line, column, severity,
+   and message data.
+4. Implement a helper that converts parsed diagnostics to `flymake-make-diagnostic`
+   objects for the current buffer.
+5. Implement `LANG-flymake-backend` with the Flymake `REPORT-FN` argument and ignored
+   keyword arguments.
+6. In the backend, check `executable-find`, cancel the previous process, start a new
+   asynchronous `make-process`, and report only non-stale results.
+7. In `define-derived-mode`, add the backend with a buffer-local `add-hook` call.
+8. Add parser and backend tests, then run validation before applying the next skill.
+
+## Tests
+
+- Test diagnostic parsing directly with fixture output from the checker.
+- Test conversion to `flymake-make-diagnostic` objects for warning and error cases.
+- Test that the backend returns promptly when `executable-find` reports no tool.
+- Test cancellation or stale process handling with a stubbed process path when practical.
+- Do not require the real external checker to be installed for ERT tests.
+
+## Anti-patterns
+
+- Running diagnostic tools when the mode loads.
+- Using synchronous `call-process` for normal Flymake checks.
+- Reporting stale process output after a newer check has started.
+- Leaving previous processes running without cancellation.
+- Enabling `flymake-mode` automatically without an explicit generated-mode decision.
+- Depending on external packages or language servers.
+
+## Validation
+
+```sh
+make test MODE_DIR=path/to/mode MODE=foo
+make compile MODE_DIR=path/to/mode MODE=foo
+```
+
+Expected result: Flymake parser and backend tests pass and the mode byte-compiles.

@@ -236,7 +236,7 @@ Acceptance criteria:
 - Core skill documents are narrow, independently applicable, include tests and
   validation commands, and forbid external dependencies.
 
-** TODO Broad support
+** DONE Broad support
 
 Goal: cover the editing, navigation, and optional tool integrations that most practical
 major modes need before tree-sitter or package polish.
@@ -930,17 +930,17 @@ syntax, font-lock, indentation, and imenu.
 Document basic mode creation, syntax table setup, comments, font-lock, indentation,
 and imenu with required tests and validation commands.
 
-** TODO Broad support: write navigation/editing skills 06 through 10
+** DONE Broad support: write navigation/editing skills 06 through 10
 
 Document outline, beginning/end-of-defun, completion-at-point, Eldoc, and current-buffer
 xref integrations.
 
-** TODO Broad support: write tool integration skills 11 through 14
+** DONE Broad support: write tool integration skills 11 through 14
 
 Document optional Flymake, compilation, run, and format commands, keeping external tools
 optional and checked before use.
 
-** TODO Broad support: write optional syntax-propertize skill 15
+** DONE Broad support: write optional syntax-propertize skill 15
 
 Document when and how to use =syntax-propertize-function= without turning it into a
 parser or replacing simpler syntax tables unnecessarily.

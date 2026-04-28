@@ -50,7 +50,7 @@ For this repository itself, keep changes scoped to the requested milestone or TO
 
 ## Completion Criteria
 
-A feature is complete only when:
+A feature is complete only when both under emacs 29 and emacs 30:
 
 - the mode byte-compiles,
 - relevant ERT tests pass,

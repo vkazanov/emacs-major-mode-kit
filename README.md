@@ -8,6 +8,12 @@ The framework intentionally avoids external Emacs package dependencies. Generate
 should look like ordinary Emacs Lisp packages built around `define-derived-mode`,
 mode-local state, ERT tests, and byte compilation.
 
+## State
+
+This skill set was tested to generated a few prog-modes for simple language using the
+00-05 skills. I am still negotiating the remaining 12 skills with my agents. See
+`docs/agent-validation` for how I go about testing things.
+
 ## Repository Layout
 
 ```text

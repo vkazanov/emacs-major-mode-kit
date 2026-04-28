@@ -7,14 +7,14 @@ types, or similar named forms.
 
 ## When to use
 
-Use after the mode has a working basic implementation and the facts file contains a
+Use after the mode has a working basic implementation and the facts source contains a
 simple one-line definition regexp, such as `func NAME`.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file.
+- Facts source.
 - Sample files used by imenu tests.
 
 ## Built-in Emacs APIs
@@ -37,7 +37,7 @@ simple one-line definition regexp, such as `func NAME`.
 
 ## Steps
 
-1. Add or confirm definition regexps in the facts file.
+1. Add or confirm definition regexps in the facts source.
 2. Define `LANG-imenu-generic-expression` in the mode file.
 3. Set `imenu-generic-expression` in the mode.
 4. Add or update samples with multiple definitions.
@@ -62,9 +62,7 @@ simple one-line definition regexp, such as `func NAME`.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: imenu tests pass and the mode byte-compiles.

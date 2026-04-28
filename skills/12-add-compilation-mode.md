@@ -14,7 +14,7 @@ contains file, line, column, warning, or error locations.
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when compilation tool facts need to be updated.
+- Facts source when compilation tool facts need to be updated.
 - Sample compilation output fixtures used by tests.
 
 ## Built-in Emacs APIs
@@ -34,7 +34,7 @@ contains file, line, column, warning, or error locations.
 ## Requirements
 
 - Require only the built-in `compile` library when needed.
-- Store compiler or checker commands in the facts file.
+- Store compiler or checker commands in the facts source.
 - Prefer existing entries from `compilation-error-regexp-alist-alist` when they match
   the tool output.
 - Add custom regexps only when built-in compilation patterns are insufficient.
@@ -50,15 +50,17 @@ contains file, line, column, warning, or error locations.
 ## Steps
 
 1. Add or confirm tool facts for the compiler, checker, or build command.
-2. Collect representative output lines and identify file, line, column, and severity
+2. For common compilation-mode shape, adapt
+   `templates/snippets/12-compilation-mode.md`.
+3. Collect representative output lines and identify file, line, column, and severity
    captures.
-3. Reuse an existing `compilation-error-regexp-alist-alist` symbol when it fits.
-4. If needed, define `LANG-compilation-error-regexp-alist` with explicit regexp entries.
-5. If custom entries are needed, define `LANG-compilation-mode` with
+4. Reuse an existing `compilation-error-regexp-alist-alist` symbol when it fits.
+5. If needed, define `LANG-compilation-error-regexp-alist` with explicit regexp entries.
+6. If custom entries are needed, define `LANG-compilation-mode` with
    `define-compilation-mode` and set `compilation-error-regexp-alist` buffer-locally.
-6. Define a helper that builds a default `compile-command` string without executing it.
-7. In `define-derived-mode`, set `compile-command` buffer-locally when appropriate.
-8. Add tests for command construction and regexp matching, then run validation before
+7. Define a helper that builds a default `compile-command` string without executing it.
+8. In `define-derived-mode`, set `compile-command` buffer-locally when appropriate.
+9. Add tests for command construction and regexp matching, then run validation before
    applying the next skill.
 
 ## Tests
@@ -83,9 +85,7 @@ contains file, line, column, warning, or error locations.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: compilation regexp and command tests pass and the mode byte-compiles.

@@ -7,14 +7,14 @@ move across the language's top-level definitions.
 
 ## When to use
 
-Use after the mode has reliable syntax state and the facts file contains a conservative
+Use after the mode has reliable syntax state and the facts source contains a conservative
 definition regexp, such as a one-line function, type, section, or block declaration.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when definition facts need to be updated.
+- Facts source when definition facts need to be updated.
 - Sample files used by defun navigation tests.
 
 ## Built-in Emacs APIs
@@ -31,7 +31,7 @@ definition regexp, such as a one-line function, type, section, or block declarat
 
 ## Requirements
 
-- Store reusable definition regexps in the facts file.
+- Store reusable definition regexps in the facts source.
 - Define a language-specific beginning function such as
   `LANG-beginning-of-defun`.
 - Set `beginning-of-defun-function` buffer-locally inside `define-derived-mode`.
@@ -45,17 +45,19 @@ definition regexp, such as a one-line function, type, section, or block declarat
 
 ## Steps
 
-1. Add or confirm the definition regexp and name capture in the facts file.
-2. Implement a helper that searches for definition starts and rejects matches where
+1. Add or confirm the definition regexp and name capture in the facts source.
+2. For reusable syntax-aware definition scanning, adapt
+   `templates/snippets/07-definition-scanning.md`.
+3. Implement a helper that searches for definition starts and rejects matches where
    `(syntax-ppss)` reports a string or comment.
-3. Implement `LANG-beginning-of-defun` with support for positive, nil, and negative
+4. Implement `LANG-beginning-of-defun` with support for positive, nil, and negative
    arguments.
-4. Implement `LANG-end-of-defun` only if needed; keep it conservative and based on the
+5. Implement `LANG-end-of-defun` only if needed; keep it conservative and based on the
    next definition start, a closing delimiter, or the end of buffer.
-5. In `define-derived-mode`, set `beginning-of-defun-function` and optional
+6. In `define-derived-mode`, set `beginning-of-defun-function` and optional
    `end-of-defun-function` with `setq-local`.
-6. Add tests using the built-in `beginning-of-defun` and `end-of-defun` commands.
-7. Run validation before applying the next skill.
+7. Add tests using the built-in `beginning-of-defun` and `end-of-defun` commands.
+8. Run validation before applying the next skill.
 
 ## Tests
 
@@ -80,9 +82,7 @@ definition regexp, such as a one-line function, type, section, or block declarat
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: defun navigation tests pass and the mode byte-compiles.

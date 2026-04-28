@@ -14,7 +14,7 @@ that users should be able to invoke from the major mode.
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when run tool facts need to be updated.
+- Facts source when run tool facts need to be updated.
 - Sample files used by run command tests.
 
 ## Built-in Emacs APIs
@@ -33,7 +33,7 @@ that users should be able to invoke from the major mode.
 
 ## Requirements
 
-- Store runtime, compiler, or test runner commands in the facts file.
+- Store runtime, compiler, or test runner commands in the facts source.
 - Define a command such as `LANG-run` and make it `interactive`.
 - Check tools with `executable-find` when the command runs; never run on load.
 - Build shell commands with `shell-quote-argument` for file names and user-controlled
@@ -47,14 +47,15 @@ that users should be able to invoke from the major mode.
 ## Steps
 
 1. Add or confirm run tool facts such as interpreter, runner, or compiler command.
-2. Define a helper that builds the run command string from `buffer-file-name` and facts.
-3. Make the helper signal a clear `user-error` when there is no current file or the tool
+2. For common run-command shape, adapt `templates/snippets/13-run-command.md`.
+3. Define a helper that builds the run command string from `buffer-file-name` and facts.
+4. Make the helper signal a clear `user-error` when there is no current file or the tool
    is missing.
-4. Implement `LANG-run` as an interactive command that calls `compile` or
+5. Implement `LANG-run` as an interactive command that calls `compile` or
    `compilation-start`.
-5. If needed, pass the language compilation mode from skill 12 to `compilation-start`.
-6. Add an optional mode-local keybinding in `LANG-mode-map`.
-7. Add command-construction and interactive-command tests, then run validation before
+6. If needed, pass the language compilation mode from skill 12 to `compilation-start`.
+7. Add an optional mode-local keybinding in `LANG-mode-map`.
+8. Add command-construction and interactive-command tests, then run validation before
    applying the next skill.
 
 ## Tests
@@ -78,9 +79,7 @@ that users should be able to invoke from the major mode.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: run command tests pass and the mode byte-compiles.

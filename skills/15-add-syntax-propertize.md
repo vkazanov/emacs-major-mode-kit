@@ -19,7 +19,7 @@ sufficient.
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when comment, string, or escape facts need to be recorded.
+- Facts source when comment, string, or escape facts need to be recorded.
 - Sample files used by syntax propertize tests.
 
 ## Built-in Emacs APIs
@@ -41,7 +41,7 @@ sufficient.
 - Use syntax propertize only for comments, strings, or escapes that the syntax table
   alone cannot model accurately.
 - Record new language facts about context-sensitive comments, strings, or escapes in
-  the facts file.
+  the facts source.
 - Place rules, helpers, and related constants in the generated mode file's
   `;;;; Syntax propertize` section.
 - Define a mode-specific function such as `LANG-mode--syntax-propertize`.
@@ -102,9 +102,7 @@ sufficient.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: syntax propertize tests pass, existing syntax table tests keep

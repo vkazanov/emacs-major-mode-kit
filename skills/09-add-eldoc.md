@@ -7,14 +7,14 @@ functions, or forms.
 
 ## When to use
 
-Use after syntax state is reliable and the facts file contains documentation strings or
+Use after syntax state is reliable and the facts source contains documentation strings or
 enough static metadata to derive short documentation.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when documentation facts need to be updated.
+- Facts source when documentation facts need to be updated.
 - Sample files used by Eldoc tests.
 
 ## Built-in Emacs APIs
@@ -29,7 +29,7 @@ enough static metadata to derive short documentation.
 
 ## Requirements
 
-- Store reusable documentation data in the facts file.
+- Store reusable documentation data in the facts source.
 - Define a language-specific function such as `LANG-eldoc-function`.
 - Add the function to `eldoc-documentation-functions` buffer-locally inside
   `define-derived-mode`.
@@ -45,15 +45,16 @@ enough static metadata to derive short documentation.
 ## Steps
 
 1. Add documentation facts, such as keyword descriptions or builtin signatures.
-2. Implement a helper that identifies the symbol at point with `thing-at-point` or
+2. For common static Eldoc shape, adapt `templates/snippets/09-eldoc.md`.
+3. Implement a helper that identifies the symbol at point with `thing-at-point` or
    `bounds-of-thing-at-point`.
-3. Reject string and comment contexts with `syntax-ppss`.
-4. Implement `LANG-eldoc-function` with a `CALLBACK` argument and optional ignored
+4. Reject string and comment contexts with `syntax-ppss`.
+5. Implement `LANG-eldoc-function` with a `CALLBACK` argument and optional ignored
    extra arguments.
-5. Return a short documentation string for known symbols and `nil` otherwise.
-6. In `define-derived-mode`, add the function to `eldoc-documentation-functions` with
+6. Return a short documentation string for known symbols and `nil` otherwise.
+7. In `define-derived-mode`, add the function to `eldoc-documentation-functions` with
    a buffer-local `add-hook` call.
-7. Add direct tests for the documentation function and run validation before applying
+8. Add direct tests for the documentation function and run validation before applying
    the next skill.
 
 ## Tests
@@ -78,9 +79,7 @@ enough static metadata to derive short documentation.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: Eldoc tests pass and the mode byte-compiles.

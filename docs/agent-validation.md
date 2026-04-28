@@ -14,16 +14,16 @@ codex --ask-for-approval never "Summarize the current instructions."
 ```
 
 Expected: Codex summarizes guidance from `AGENTS.md`, including skill order,
-`MODE_DIR`/`MODE` validation, and Emacs 29+ built-ins.
+`skills/index.md`, source-backed intake for real languages, `MODE_DIR`/`MODE`
+validation, optional-skill skips, facts lifecycle, and Emacs 29+ built-ins.
 
 For Claude Code, `CLAUDE.md` imports `AGENTS.md`. Start Claude Code from the repository
 root and run `/memory`.
 
 Expected: Claude Code lists `CLAUDE.md` and the imported `AGENTS.md` as loaded memory.
 
-This checkout may not be a git repository. For Codex validation, launch from this
-directory or from a real git checkout root so project instruction discovery is
-predictable.
+This checkout may not be a git repository. For validation, launch from this directory
+or from a real git checkout root so project instruction discovery is predictable.
 
 ## Cross-Agent Trial Prompt
 
@@ -44,17 +44,14 @@ Language facts:
 - indentation: braces, offset 2
 
 Add samples and ERT tests for mode activation, comments, strings, font-lock,
-indentation, and imenu. Run validation after each skill, inline the facts file during
-skill 17, and clean bytecode at the end.
+indentation, and imenu. Run validation after each applied skill, inline the facts
+source during skill 17, and clean bytecode at the end.
 ```
 
-Accept the result only if all commands pass:
+Accept the result only if this passes:
 
 ```sh
-make test MODE_DIR=examples/mini-hcl-mode MODE=mini-hcl
-make compile MODE_DIR=examples/mini-hcl-mode MODE=mini-hcl
-make polish-check MODE_DIR=examples/mini-hcl-mode MODE=mini-hcl
-make clean MODE_DIR=examples/mini-hcl-mode
+make validate-polished MODE_DIR=examples/mini-hcl-mode MODE=mini-hcl
 ```
 
 ## Real-Language Targets
@@ -70,6 +67,23 @@ language support.
 - SQL DDL subset: `MODE=mini-sql`, `EXT=sql`; comments `--` and `/* */`; single-quoted
   strings; keyword highlighting; imenu for `CREATE TABLE name`; simple continuation or
   zero indentation. This checks a non-brace shape.
+
+## Source-Backed Trial Prompt
+
+Use this shape when testing a real language whose facts are not all supplied:
+
+```text
+Create examples/test-LANG-mode for LANGNAME using official language documentation.
+First complete the source-backed intake from docs/real-language-intake.md. Record
+official sources in MODE_DIR/reference/sources.md, create small curated fixtures under
+MODE_DIR/samples/, then apply the broadest applicable skill set. Do not invent
+formatter commands, diagnostics, run commands, or tree-sitter grammars; record skipped
+optional skills with reasons. Finish with skill 17 and run make validate-polished.
+```
+
+The trial passes only if the agent records sources, creates small fixtures, applies
+only justified optional skills, documents skipped optional skills, and validates the
+polished mode.
 
 ## Advanced Feature Prompt Shape
 
@@ -87,9 +101,22 @@ Language facts:
 
 Add ERT tests that stub executable-find and tree-sitter readiness/setup functions.
 The missing diagnostic tool path must call REPORT-FN with no diagnostics and must not
-start a process. Run make test, make compile, and make clean with MODE_DIR and MODE
-after each applied skill; after skill 17, also run make polish-check.
+start a process. Run make validate after each non-final applied skill; after skill 17,
+run make validate-polished.
 ```
+
+## Skip-Semantics Checks
+
+Use these dry-run review scenarios to check optional-skill policy:
+
+- `00-17` with no formatter and no known tree-sitter grammar should skip skills `14`
+  and `16` with reasons.
+- Sparse `14` with no formatter should ask once for formatter facts, then skip if they
+  remain absent.
+- Sparse `16` with a known grammar that is not installed locally may create
+  `LANG-ts-mode.el`, but tests must stub missing grammar behavior.
+- Tool-backed skills with known commands absent locally should use command-time checks
+  and stubbed tests, not load-time failures.
 
 ## Acceptance Checklist
 
@@ -104,18 +131,19 @@ Record results with this template:
 - Date:
 - Prompt target:
 - Instruction loading confirmed:
+- Sources recorded:
+- Fixture provenance:
 - Skills applied in order:
-- Validation after each skill:
-- Final `make test`:
-- Final `make compile`:
-- Final `make polish-check`:
-- `make clean MODE_DIR=...` run:
-- Facts file inlined:
+- Skills skipped with reasons:
+- Validation after each applied skill:
+- Final `make validate-polished`:
+- Facts source inlined:
+- Runtime facts file absent:
 - Unrelated edits:
 - Notes:
 ```
 
 The trial passes when the agent reads the instructions, opens the relevant skill files,
-keeps `EXT` bare, edits only the generated files, avoids external dependencies and
-global keybindings, inlines the final facts file into the mode file, and produces
-passing tests, byte compilation, and polish checks.
+uses `skills/index.md` for planning, keeps `EXT` bare, edits only the generated files,
+avoids external dependencies and global keybindings, inlines the final facts source
+into the mode file, leaves no runtime facts file, and produces passing validation.

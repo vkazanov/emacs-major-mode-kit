@@ -3,7 +3,7 @@
 ## Goal
 
 Create the initial generated language package from the templates: mode file, test file,
-and facts file. The result should load, derive from `prog-mode`, associate the bare
+and facts source. The result should load, derive from `prog-mode`, associate the bare
 extension with the mode, and pass a basic activation test.
 
 ## When to use
@@ -15,7 +15,7 @@ imenu, diagnostics, navigation backends, parser variants, commands, or tool inte
 
 - Generated mode file, such as `foo-mode.el`.
 - Generated test file, such as `foo-mode-test.el`.
-- Generated facts file, such as `foo-facts.el`.
+- Facts source, such as `foo-facts.el`.
 - Optional sample files only when needed by the basic load test.
 
 ## Built-in Emacs APIs
@@ -49,7 +49,7 @@ imenu, diagnostics, navigation backends, parser variants, commands, or tool inte
    language prefix.
 2. Replace placeholders consistently in filenames, symbols, docstrings, feature names,
    and the file association regexp.
-3. Fill the facts file with at least `:language` and `:extensions`; leave unknown facts
+3. Fill the facts source with at least `:language` and `:extensions`; leave unknown facts
    as `nil`.
 4. Ensure the mode derives from `prog-mode` and sets only the placeholder local behavior
    from the template.
@@ -75,9 +75,7 @@ imenu, diagnostics, navigation backends, parser variants, commands, or tool inte
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: the basic ERT test passes and the mode byte-compiles.

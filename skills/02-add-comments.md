@@ -14,7 +14,7 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when comment facts need to be updated.
+- Facts source when comment facts need to be updated.
 - Sample files used by comment tests.
 
 ## Built-in Emacs APIs
@@ -33,7 +33,7 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 - Set comment variables buffer-locally inside `define-derived-mode`.
 - Set `comment-start` to the primary line comment opener plus a trailing space when
   appropriate, such as `"// "`. If the language has multiple line comment openers,
-  use the documented primary opener from the facts file or the first line opener
+  use the documented primary opener from the facts source or the first line opener
   supplied by the user.
 - Set `comment-end` to `""` for line comments.
 - Set `comment-start-skip` to match the language's supported comment openers.
@@ -42,17 +42,19 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 
 ## Steps
 
-1. Read comment delimiters from the facts file or add them there.
-2. In `define-derived-mode`, set `comment-start`, `comment-end`,
+1. Read comment delimiters from the facts source or add them there.
+2. For common line/block comment variables, adapt
+   `templates/snippets/02-comment-variables.md`.
+3. In `define-derived-mode`, set `comment-start`, `comment-end`,
    `comment-start-skip`, and optionally `comment-use-syntax` with `setq-local`.
-3. For languages with `//` line comments and `/* */` block comments, a practical
+4. For languages with `//` line comments and `/* */` block comments, a practical
    `comment-start-skip` is:
 
    ```elisp
    "\\(?://+\\|/\\*+\\)\\s *"
    ```
 
-4. For languages with `#`, `//`, and `/* */` comments, keep `comment-start` on the
+5. For languages with `#`, `//`, and `/* */` comments, keep `comment-start` on the
    primary line opener, such as `"# "` or `"// "`, and match every opener in
    `comment-start-skip`:
 
@@ -60,8 +62,8 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
    "\\(?:#+\\|//+\\|/\\*+\\)\\s *"
    ```
 
-5. Add tests for the configured variables and at least one built-in comment command.
-6. Run validation before applying the next skill.
+6. Add tests for the configured variables and at least one built-in comment command.
+7. Run validation before applying the next skill.
 
 ## Tests
 
@@ -82,9 +84,7 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: comment command tests pass and the mode byte-compiles.

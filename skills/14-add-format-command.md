@@ -14,7 +14,7 @@ file and write formatted source text to stdout.
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when formatter facts need to be updated.
+- Facts source when formatter facts need to be updated.
 - Sample files used by format command tests.
 
 ## Built-in Emacs APIs
@@ -33,7 +33,7 @@ file and write formatted source text to stdout.
 
 ## Requirements
 
-- Store the formatter command and arguments in the facts file.
+- Store the formatter command and arguments in the facts source.
 - Define a command such as `LANG-format-buffer` and make it `interactive`.
 - Check the formatter with `executable-find` when the command runs; never run on load.
 - Prefer `call-process-region` for simple synchronous stdin/stdout formatters.
@@ -50,16 +50,18 @@ file and write formatted source text to stdout.
 ## Steps
 
 1. Add or confirm formatter facts, including command name and required arguments.
-2. Define a helper that builds the formatter program and argument list without running
+2. If no formatter command is known, skip this skill and record the reason.
+3. For common stdin/stdout formatter shape, adapt `templates/snippets/14-formatter.md`.
+4. Define a helper that builds the formatter program and argument list without running
    the formatter.
-3. Implement `LANG-format-buffer` or `LANG-format-region` as an interactive command.
-4. Use `executable-find` at command time and signal `user-error` if the formatter is
+5. Implement `LANG-format-buffer` or `LANG-format-region` as an interactive command.
+6. Use `executable-find` at command time and signal `user-error` if the formatter is
    unavailable.
-5. Capture formatter output in a temp buffer and replace the target buffer or region
+7. Capture formatter output in a temp buffer and replace the target buffer or region
    only after the formatter exits successfully.
-6. Preserve point and avoid changing the buffer on non-zero formatter exit.
-7. Add an optional mode-local keybinding in `LANG-mode-map`.
-8. Add formatter helper and command tests, then run validation before applying the next
+8. Preserve point and avoid changing the buffer on non-zero formatter exit.
+9. Add an optional mode-local keybinding in `LANG-mode-map`.
+10. Add formatter helper and command tests, then run validation before applying the next
    skill.
 
 ## Tests
@@ -85,9 +87,7 @@ file and write formatted source text to stdout.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: format command tests pass and the mode byte-compiles.

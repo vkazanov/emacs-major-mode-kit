@@ -14,7 +14,7 @@ builtin, or definition data needed for highlighting.
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file.
+- Facts source.
 - Sample files used by highlighting tests.
 
 ## Built-in Emacs APIs
@@ -31,7 +31,7 @@ builtin, or definition data needed for highlighting.
 
 ## Requirements
 
-- Store reusable language data in the facts file.
+- Store reusable language data in the facts source.
 - Use `regexp-opt` for keyword and builtin lists.
 - Use built-in font-lock faces only.
 - Set `font-lock-defaults` buffer-locally inside `define-derived-mode`.
@@ -68,9 +68,7 @@ builtin, or definition data needed for highlighting.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: font-lock tests pass and the mode byte-compiles.

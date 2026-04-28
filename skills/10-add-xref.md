@@ -14,7 +14,7 @@ imenu or defun navigation has proven the definition regexp is conservative enoug
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when xref definition facts need to be updated.
+- Facts source when xref definition facts need to be updated.
 - Sample files used by xref tests.
 
 ## Built-in Emacs APIs
@@ -33,7 +33,7 @@ imenu or defun navigation has proven the definition regexp is conservative enoug
 ## Requirements
 
 - Require only built-in libraries such as `cl-lib` and `xref` when needed.
-- Store reusable definition regexps and name captures in the facts file.
+- Store reusable definition regexps and name captures in the facts source.
 - Define a language-specific backend function such as `LANG-xref-backend`.
 - Add the backend function to `xref-backend-functions` buffer-locally inside
   `define-derived-mode`.
@@ -47,18 +47,19 @@ imenu or defun navigation has proven the definition regexp is conservative enoug
 ## Steps
 
 1. Add or confirm definition facts with a capture group for the definition name.
-2. Require `xref` and `cl-lib` in the mode file if they are not already available.
-3. Define `LANG-xref-backend` to return a backend symbol such as `LANG`.
-4. Implement `xref-backend-identifier-at-point` for that backend using
+2. For common current-buffer xref shape, adapt `templates/snippets/10-xref.md`.
+3. Require `xref` and `cl-lib` in the mode file if they are not already available.
+4. Define `LANG-xref-backend` to return a backend symbol such as `LANG`.
+5. Implement `xref-backend-identifier-at-point` for that backend using
    `thing-at-point`.
-5. Implement a current-buffer definition search helper that compares captured names to
+6. Implement a current-buffer definition search helper that compares captured names to
    the requested identifier and ignores string/comment matches with `syntax-ppss`.
-6. Implement `xref-backend-definitions` to return xref items made with `xref-make` and
+7. Implement `xref-backend-definitions` to return xref items made with `xref-make` and
    `xref-make-file-location`.
-7. In `define-derived-mode`, add the backend function to `xref-backend-functions` with
+8. In `define-derived-mode`, add the backend function to `xref-backend-functions` with
    a buffer-local `add-hook` call.
-8. Add tests that call backend functions and methods directly where practical.
-9. Run validation before applying the next skill.
+9. Add tests that call backend functions and methods directly where practical.
+10. Run validation before applying the next skill.
 
 ## Tests
 
@@ -83,9 +84,7 @@ imenu or defun navigation has proven the definition regexp is conservative enoug
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: xref tests pass and the mode byte-compiles.

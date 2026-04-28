@@ -15,7 +15,7 @@ features depend on syntax state.
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when comment or string facts need to be recorded.
+- Facts source when comment or string facts need to be recorded.
 - Sample files used by syntax tests.
 
 ## Built-in Emacs APIs
@@ -29,7 +29,7 @@ features depend on syntax state.
 
 - Define or update `LANG-mode-syntax-table`.
 - Pass the syntax table to `define-derived-mode` with `:syntax-table`.
-- Record comment and string delimiters in the facts file when they are language facts.
+- Record comment and string delimiters in the facts source when they are language facts.
 - Include exact syntax recipes for common C-style line comments, block comments,
   double-quoted strings, and backslash quoting when the language uses them.
 - When the language has multiple line comment delimiters, include every delimiter
@@ -42,8 +42,9 @@ features depend on syntax state.
 
 1. Identify line comment, block comment, string delimiter, and backslash syntax from the
    language facts or samples.
-2. Update `LANG-mode-syntax-table` with `modify-syntax-entry`.
-3. For C-style `//` and `/* */` comments, use this recipe:
+2. For common syntax table recipes, adapt `templates/snippets/01-syntax-table.md`.
+3. Update `LANG-mode-syntax-table` with `modify-syntax-entry`.
+4. For C-style `//` and `/* */` comments, use this recipe:
 
    ```elisp
    (modify-syntax-entry ?/ ". 124b" table)
@@ -51,7 +52,7 @@ features depend on syntax state.
    (modify-syntax-entry ?\n "> b" table)
    ```
 
-4. For languages that also have a single-character line comment opener such as `#`,
+5. For languages that also have a single-character line comment opener such as `#`,
    add that opener to the same comment style:
 
    ```elisp
@@ -61,15 +62,15 @@ features depend on syntax state.
    If a delimiter cannot be modeled reliably with syntax table entries, record the
    fact and defer the case to `15-add-syntax-propertize.md`.
 
-5. For double-quoted strings and backslash quoting, use this recipe:
+6. For double-quoted strings and backslash quoting, use this recipe:
 
    ```elisp
    (modify-syntax-entry ?\" "\"" table)
    (modify-syntax-entry ?\\ "\\" table)
    ```
 
-6. Add tests that place point inside representative comments and strings.
-7. Run validation before applying the next skill.
+7. Add tests that place point inside representative comments and strings.
+8. Run validation before applying the next skill.
 
 ## Tests
 
@@ -89,9 +90,7 @@ features depend on syntax state.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: syntax tests pass and the mode byte-compiles.

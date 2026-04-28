@@ -14,7 +14,7 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when indentation facts need to be updated.
+- Facts source when indentation facts need to be updated.
 - Sample files used by indentation tests.
 
 ## Built-in Emacs APIs
@@ -32,7 +32,7 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 
 - Define a language-specific `LANG-indent-line`.
 - Set `indent-line-function` buffer-locally inside `define-derived-mode`.
-- Store indentation style and offset in the facts file when useful.
+- Store indentation style and offset in the facts source when useful.
 - For brace languages, indent by brace depth and dedent lines beginning with `}`.
 - Ignore braces or indentation markers inside strings and comments using `syntax-ppss`.
 - Preserve point position where practical.
@@ -42,14 +42,15 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 
 1. Choose the simplest indentation rule that matches the language's current scope.
 2. Update indentation facts, such as `:style braces` and `:offset 4`.
-3. Implement a helper that calculates indentation for the current line.
-4. Use `back-to-indentation` when checking whether a line starts with a closing token.
-5. Use `syntax-ppss` at candidate token positions so strings and comments do not affect
+3. For common brace-depth indentation, adapt `templates/snippets/04-brace-indentation.md`.
+4. Implement a helper that calculates indentation for the current line.
+5. Use `back-to-indentation` when checking whether a line starts with a closing token.
+6. Use `syntax-ppss` at candidate token positions so strings and comments do not affect
    indentation.
-6. Implement `LANG-indent-line` with `indent-line-to`.
-7. Set `indent-line-function` in the mode.
-8. Add an `indent-region` fixture test.
-9. Run validation before applying the next skill.
+7. Implement `LANG-indent-line` with `indent-line-to`.
+8. Set `indent-line-function` in the mode.
+9. Add an `indent-region` fixture test.
+10. Run validation before applying the next skill.
 
 ## Tests
 
@@ -69,9 +70,7 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: indentation tests pass and the mode byte-compiles.

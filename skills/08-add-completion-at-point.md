@@ -7,14 +7,14 @@ current-buffer symbols.
 
 ## When to use
 
-Use after syntax state is reliable and the facts file contains keyword, builtin, or
+Use after syntax state is reliable and the facts source contains keyword, builtin, or
 simple symbol data that should be offered as completions.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when completion facts need to be updated.
+- Facts source when completion facts need to be updated.
 - Sample files used by completion tests.
 
 ## Built-in Emacs APIs
@@ -30,7 +30,7 @@ simple symbol data that should be offered as completions.
 
 ## Requirements
 
-- Start with keywords and builtins from the facts file.
+- Start with keywords and builtins from the facts source.
 - Optionally include current-buffer symbols discovered with a conservative scan.
 - Define a language-specific function such as `LANG-completion-at-point`.
 - Add the function to `completion-at-point-functions` buffer-locally inside
@@ -44,15 +44,16 @@ simple symbol data that should be offered as completions.
 ## Steps
 
 1. Add or confirm `:keywords` and `:builtins` facts.
-2. Define a completion collection from those facts.
-3. If useful, add a helper that collects current-buffer symbols and ignores strings and
+2. For common CAPF shape, adapt `templates/snippets/08-capf.md`.
+3. Define a completion collection from those facts.
+4. If useful, add a helper that collects current-buffer symbols and ignores strings and
    comments with `syntax-ppss`.
-4. Implement `LANG-completion-at-point` using `bounds-of-thing-at-point`.
-5. Return `(list start end collection :exclusive 'no)` or equivalent CAPF data when a
+5. Implement `LANG-completion-at-point` using `bounds-of-thing-at-point`.
+6. Return `(list start end collection :exclusive 'no)` or equivalent CAPF data when a
    completion prefix is present.
-6. In `define-derived-mode`, add the function to `completion-at-point-functions` with
+7. In `define-derived-mode`, add the function to `completion-at-point-functions` with
    a buffer-local `add-hook` call.
-7. Add direct CAPF tests and run validation before applying the next skill.
+8. Add direct CAPF tests and run validation before applying the next skill.
 
 ## Tests
 
@@ -76,9 +77,7 @@ simple symbol data that should be offered as completions.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: completion tests pass and the mode byte-compiles.

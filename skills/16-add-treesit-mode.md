@@ -11,14 +11,16 @@ Use after the regex/basic mode is already useful and the language has an Emacs 2
 tree-sitter grammar that can provide better highlighting, indentation, imenu, or defun
 navigation.
 
-Do not use this skill when no grammar is available or when the regex/basic mode is
-sufficient for the requested feature set.
+Do not use this skill when no Emacs tree-sitter grammar language symbol is known or
+when the regex/basic mode is sufficient for the requested feature set. If the grammar
+symbol is known but the grammar is not installed locally, this skill may still be
+applied with no-op missing-grammar behavior.
 
 ## Allowed files
 
 - New generated tree-sitter mode file, such as `foo-ts-mode.el`.
 - Generated test file, such as `foo-mode-test.el`.
-- Generated facts file when tree-sitter language, query, indentation, imenu, or defun
+- Facts source when tree-sitter language, query, indentation, imenu, or defun
   facts need to be recorded.
 - Sample files used by tree-sitter tests.
 
@@ -48,11 +50,11 @@ Do not remove or rename the generated regex/basic mode file.
   `LANG-mode.el`.
 - Make `LANG-ts-mode` derive from `LANG-mode` so existing syntax tables, comments,
   commands, and fallback behavior remain available.
-- Require only built-in Emacs libraries and the generated base mode and facts file.
-- Record tree-sitter facts in the facts file, including at least the grammar language
+- Require only built-in Emacs libraries, `LANG-mode`, and `treesit`.
+- Record tree-sitter facts in the facts source, including at least the grammar language
   symbol used with Emacs tree-sitter APIs.
 - Define a mode-specific language constant such as `LANG-ts-mode--language` from the
-  facts file.
+  facts source.
 - Keep `LANG-mode` as the file-extension default. `LANG-ts-mode` is opt-in unless a
   later explicit package-polish step documents user-level remapping.
 - Check grammar availability inside `LANG-ts-mode` with
@@ -69,24 +71,26 @@ Do not remove or rename the generated regex/basic mode file.
 
 ## Steps
 
-1. Add tree-sitter facts to `LANG-facts`, such as `:treesit (:language LANG ...)`.
+1. Add tree-sitter facts to the facts source, such as `:treesit (:language LANG ...)`.
 2. Create `LANG-ts-mode.el` with lexical binding, normal package headers,
    Commentary, Code, `provide`, and a file footer.
-3. Require `LANG-mode`, `LANG-facts`, and `treesit`.
-4. Define tree-sitter language data and optional setup constants in a dedicated
+3. For common missing-grammar behavior, adapt `templates/snippets/16-treesit-noop.md`.
+4. Require `LANG-mode` and `treesit`. Read facts through `LANG-mode` when the base mode
+   is already polished; do not require `LANG-facts` after polish.
+5. Define tree-sitter language data and optional setup constants in a dedicated
    tree-sitter section.
-5. If adding tree-sitter highlighting, define a helper or constant based on
+6. If adding tree-sitter highlighting, define a helper or constant based on
    `treesit-font-lock-rules` and choose a conservative
    `treesit-font-lock-feature-list`.
-6. If adding tree-sitter indentation, imenu, or defun navigation, define the smallest
+7. If adding tree-sitter indentation, imenu, or defun navigation, define the smallest
    required `treesit-simple-indent-rules`, `treesit-simple-imenu-settings`,
    `treesit-defun-type-regexp`, or `treesit-defun-name-function` values.
-7. Define an autoloaded `LANG-ts-mode` derived from `LANG-mode`.
-8. Inside `LANG-ts-mode`, check `(treesit-ready-p LANG-ts-mode--language t)`.
-9. In the ready branch, call `treesit-parser-create`, set all tree-sitter locals, and
+8. Define an autoloaded `LANG-ts-mode` derived from `LANG-mode`.
+9. Inside `LANG-ts-mode`, check `(treesit-ready-p LANG-ts-mode--language t)`.
+10. In the ready branch, call `treesit-parser-create`, set all tree-sitter locals, and
    then call `treesit-major-mode-setup`.
-10. In the unavailable branch, do nothing beyond the inherited `LANG-mode` setup.
-11. Add tests for available and unavailable grammar behavior, then run validation
+11. In the unavailable branch, do nothing beyond the inherited `LANG-mode` setup.
+12. Add tests for available and unavailable grammar behavior, then run validation
     before applying the next skill.
 
 ## Tests
@@ -122,9 +126,7 @@ Do not remove or rename the generated regex/basic mode file.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: the regex/basic mode tests keep passing, tree-sitter mode tests pass

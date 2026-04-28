@@ -8,14 +8,14 @@ no external process work when the tool is unavailable.
 
 ## When to use
 
-Use after the mode has reliable syntax state and the facts file identifies an external
+Use after the mode has reliable syntax state and the facts source identifies an external
 diagnostic tool or compiler output format for the language.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Generated facts file when diagnostic tool facts need to be updated.
+- Facts source when diagnostic tool facts need to be updated.
 - Sample files or diagnostic output fixtures used by Flymake tests.
 
 ## Built-in Emacs APIs
@@ -34,7 +34,7 @@ diagnostic tool or compiler output format for the language.
 ## Requirements
 
 - Require only built-in libraries such as `flymake` and `subr-x` when needed.
-- Store the checker or compiler command in the facts file.
+- Store the checker or compiler command in the facts source.
 - Define a language-specific backend such as `LANG-flymake-backend`.
 - Add the backend to `flymake-diagnostic-functions` buffer-locally inside
   `define-derived-mode`.
@@ -55,19 +55,21 @@ diagnostic tool or compiler output format for the language.
 ## Steps
 
 1. Add or confirm tool facts for the checker command and diagnostic output format.
-2. Define a buffer-local variable such as `LANG--flymake-process`.
-3. Implement a parser helper that converts checker output into line, column, severity,
+2. For common asynchronous process shape, adapt
+   `templates/snippets/11-flymake-process.md`.
+3. Define a buffer-local variable such as `LANG--flymake-process`.
+4. Implement a parser helper that converts checker output into line, column, severity,
    and message data.
-4. Implement a helper that converts parsed diagnostics to `flymake-make-diagnostic`
+5. Implement a helper that converts parsed diagnostics to `flymake-make-diagnostic`
    objects for the current buffer.
-5. Implement `LANG-flymake-backend` with the Flymake `REPORT-FN` argument and ignored
+6. Implement `LANG-flymake-backend` with the Flymake `REPORT-FN` argument and ignored
    keyword arguments.
-6. In the backend, check `executable-find`. When the tool is unavailable, call
+7. In the backend, check `executable-find`. When the tool is unavailable, call
    `REPORT-FN` with `nil` and do not start a process. Otherwise cancel the previous
    process, start a new asynchronous `make-process`, and report only non-stale
    results.
-7. In `define-derived-mode`, add the backend with a buffer-local `add-hook` call.
-8. Add parser and backend tests, then run validation before applying the next skill.
+8. In `define-derived-mode`, add the backend with a buffer-local `add-hook` call.
+9. Add parser and backend tests, then run validation before applying the next skill.
 
 ## Tests
 
@@ -90,9 +92,7 @@ diagnostic tool or compiler output format for the language.
 ## Validation
 
 ```sh
-make test MODE_DIR=path/to/mode MODE=foo
-make compile MODE_DIR=path/to/mode MODE=foo
-make clean MODE_DIR=path/to/mode
+make validate MODE_DIR=path/to/mode MODE=foo
 ```
 
 Expected result: Flymake parser and backend tests pass and the mode byte-compiles.

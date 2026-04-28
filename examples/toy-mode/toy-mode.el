@@ -12,7 +12,6 @@
 (require 'cl-lib)
 (require 'imenu)
 (require 'newcomment)
-(require 'toy-facts)
 
 (defgroup toy nil
   "Major mode for Toy."
@@ -45,6 +44,37 @@
   "Syntax table for `toy-mode'.")
 
 ;;;; Language data
+
+(defconst toy-facts
+  '(:language "Toy"
+    :extensions ("toy")
+
+    :comments
+    (:line "//"
+     :block-start "/*"
+     :block-end "*/")
+
+    :strings
+    (:delimiters ("\"")
+     :escape "\\")
+
+    :keywords ("else" "func" "if" "let" "return")
+    :builtins ("print")
+
+    :definitions
+    (:function "\\_<func\\_>\\s-+\\([[:alpha:]_][[:alnum:]_]*\\)"
+     :type nil
+     :variable "\\_<let\\_>\\s-+\\([[:alpha:]_][[:alnum:]_]*\\)")
+
+    :indentation
+    (:style braces
+     :offset 4)
+
+    :tools
+    (:compiler nil
+     :formatter nil
+     :repl nil))
+  "Language facts for Toy.")
 
 (defconst toy--comments
   (plist-get toy-facts :comments)

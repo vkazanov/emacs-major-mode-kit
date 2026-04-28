@@ -11,9 +11,9 @@ mode-local state, ERT tests, and byte compilation.
 ## Status
 
 The skill documents currently run from `00-create-basic-mode.md` through
-`17-polish-package.md`. The committed toy example applies skills `00` through `05`;
-`docs/agent-validation.md` describes cross-agent validation scenarios for additional
-language subsets.
+`17-polish-package.md`. The committed toy example applies skills `00` through `05`
+and final polish skill `17`; `docs/agent-validation.md` describes cross-agent
+validation scenarios for additional language subsets.
 
 Agents should treat `AGENTS.md` as the canonical workflow and language-bootstrap
 intake document.
@@ -55,7 +55,6 @@ minimal-mode-kit/
     toy-mode/
       toy-mode.el
       toy-mode-test.el
-      toy-facts.el
       samples/
         basic.toy
         font-lock.toy
@@ -72,14 +71,18 @@ minimal-mode-kit/
    `LANG` is the Lisp prefix, `LANGNAME` is the human-readable language name, and
    `EXT` is the bare file extension.
 3. Update the language facts file with reusable language data such as extensions,
-   comments, keywords, definitions, indentation style, and optional tools.
+   comments, keywords, definitions, indentation style, and optional tools. This file is
+   a temporary scaffold for skills `00` through `16`.
 4. Apply one skill document at a time, starting with `skills/00-create-basic-mode.md`
    and then adding only the next feature you need.
 5. Add or update ERT tests for the behavior introduced by that skill.
 6. Run validation before moving to the next skill.
+7. Always finish with `skills/17-polish-package.md`, which inlines `LANG-facts.el`
+   into the main mode file and removes the separate runtime facts file.
 
 The toy example applies skills `00` through `05`: basic mode, syntax table, comments,
-font-lock, indentation, and imenu.
+font-lock, indentation, and imenu. It also applies skill `17`, so its language facts
+are inlined into `toy-mode.el`.
 
 ## Conventions
 
@@ -90,6 +93,8 @@ font-lock, indentation, and imenu.
 - Skill `15` is `15-add-syntax-propertize.md`, skill `16` is
   `16-add-treesit-mode.md`, and skill `17` is `17-polish-package.md`.
 - Apply one skill at a time and run validation after each feature.
+- Always apply skill `17` as the final step, even when the requested feature range
+  stops earlier.
 - Use only Emacs 29+ built-ins; do not add external Emacs package dependencies.
 - Commands should use mode-local keymaps, not global keybindings.
 

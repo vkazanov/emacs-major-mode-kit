@@ -31,8 +31,8 @@ Run the same prompt in separate clean copies for Codex and Claude Code:
 
 ```text
 Create examples/mini-hcl-mode for a Mini HCL language subset by applying skills 00
-through 05 in order. Use LANG=mini-hcl, LANGNAME="Mini HCL", EXT=hcl,
-MODE_DIR=examples/mini-hcl-mode, MODE=mini-hcl.
+through 05 in order, then skill 17 as the final polish step. Use LANG=mini-hcl,
+LANGNAME="Mini HCL", EXT=hcl, MODE_DIR=examples/mini-hcl-mode, MODE=mini-hcl.
 
 Language facts:
 - comments: #, //, and /* */
@@ -44,7 +44,8 @@ Language facts:
 - indentation: braces, offset 2
 
 Add samples and ERT tests for mode activation, comments, strings, font-lock,
-indentation, and imenu. Run validation after each skill and clean bytecode at the end.
+indentation, and imenu. Run validation after each skill, inline the facts file during
+skill 17, and clean bytecode at the end.
 ```
 
 Accept the result only if both commands pass:
@@ -87,10 +88,12 @@ Record results with this template:
 - Final `make test`:
 - Final `make compile`:
 - `make clean` run:
+- Facts file inlined:
 - Unrelated edits:
 - Notes:
 ```
 
 The trial passes when the agent reads the instructions, opens the relevant skill files,
 keeps `EXT` bare, edits only the generated files, avoids external dependencies and
-global keybindings, and produces passing tests and byte compilation.
+global keybindings, inlines the final facts file into the mode file, and produces
+passing tests and byte compilation.

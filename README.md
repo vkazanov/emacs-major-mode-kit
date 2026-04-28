@@ -8,11 +8,15 @@ The framework intentionally avoids external Emacs package dependencies. Generate
 should look like ordinary Emacs Lisp packages built around `define-derived-mode`,
 mode-local state, ERT tests, and byte compilation.
 
-## State
+## Status
 
-This skill set was tested to generated a few prog-modes for simple language using the
-00-05 skills. I am still negotiating the remaining 12 skills with my agents. See
-`docs/agent-validation` for how I go about testing things.
+The skill documents currently run from `00-create-basic-mode.md` through
+`17-polish-package.md`. The committed toy example applies skills `00` through `05`;
+`docs/agent-validation.md` describes cross-agent validation scenarios for additional
+language subsets.
+
+Agents should treat `AGENTS.md` as the canonical workflow and language-bootstrap
+intake document.
 
 ## Repository Layout
 

@@ -1,0 +1,6 @@
+func main() {
+    // Greet from Toy.
+    let message = "hello";
+    print(message);
+    return;
+}

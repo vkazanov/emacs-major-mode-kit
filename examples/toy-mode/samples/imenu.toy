@@ -1,0 +1,7 @@
+func main() {
+    print("main");
+}
+
+func helper() {
+    print("helper");
+}

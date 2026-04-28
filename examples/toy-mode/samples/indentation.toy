@@ -1,0 +1,8 @@
+func main() {
+    let text = "{ not a block }";
+    if text {
+        print(text);
+    }
+    // { ignored in comments
+    /* } ignored in block comments */
+}

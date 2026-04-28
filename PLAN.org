@@ -1,0 +1,977 @@
+#+TITLE: Minimal Emacs 29+ Major Mode Skill Framework Plan
+#+AUTHOR: Codex Implementation Plan
+#+OPTIONS: toc:2
+
+* Purpose
+
+Build a minimal framework for creating Emacs major modes through small, skill-guided
+steps.
+
+The framework targets coding agents such as Codex and Claude Code. It should make it
+possible to start with a valid but simple major mode skeleton, then add Emacs integrations
+one at a time using explicit skill documents.
+
+The framework must use only functionality available in Emacs 29+ and must not depend on
+external Emacs packages. It should provide an overall repository structure universally
+understandable by popular agents.
+
+* Design Principles
+
+** Use normal Emacs Lisp
+
+Do not hide major-mode development behind a large macro DSL. Generated modes should look
+like ordinary Emacs packages.
+
+Use built-in Emacs extension points directly:
+
+- =define-derived-mode=
+- local mode keymaps
+- syntax tables
+- =syntax-propertize-function= when syntax tables are insufficient
+- =font-lock-defaults=
+- =indent-line-function=
+- =imenu-generic-expression=
+- =outline-regexp=
+- =completion-at-point-functions=
+- =eldoc-documentation-functions=
+- =xref-backend-functions=
+- =flymake-diagnostic-functions=
+- =compilation-error-regexp-alist=
+- optional Emacs 29 =treesit= APIs
+
+GNU's own Elisp manual recommends =define-derived-mode= for new major modes, deriving from
+=prog-mode= when there is no closer parent mode. Emacs 29's built-in tree-sitter support
+is optional and should be implemented as a separate mode, using =treesit-ready-p= and
+=treesit-major-mode-setup= only when the grammar is available.
+
+** Keep the framework small
+
+This project is primarily a protocol for growing modes, not a heavy library.
+
+The framework should provide:
+
+- templates
+- skill documents
+- examples
+- minimal helpers only where they reduce repetition
+- ERT tests
+- Makefile validation commands
+
+** Apply one skill at a time
+
+Each skill should integrate exactly one Emacs feature.
+
+Bad:
+
+#+begin_example
+Add syntax, highlighting, indentation, xref, Flymake, and tree-sitter in one change.
+#+end_example
+
+Good:
+
+#+begin_example
+Apply 01-add-syntax-table.md.
+Run tests.
+Apply 02-add-comments.md.
+Run tests.
+Apply 03-add-font-lock.md.
+Run tests.
+#+end_example
+
+** Prefer conservative behavior
+
+A generated major mode should be small, reliable, and easy to improve.
+
+Avoid clever parser-like regexps, broad rewrites, global state mutation, hidden hooks,
+advice, and external dependencies.
+
+** Tests are part of every feature
+
+Every skill that changes behavior must add or update ERT tests.
+
+Use only built-in testable behavior:
+
+- =derived-mode-p=
+- =syntax-ppss=
+- =font-lock-ensure=
+- face text properties
+- =indent-region=
+- =imenu--make-index-alist=
+- direct calls to completion, Eldoc, xref, Flymake parser helpers
+
+* Usability and Scope Clarifications
+
+** User workflow must be explicit
+
+=README.md= must include a quickstart that shows the complete path from template to
+working mode:
+
+1. copy or instantiate the three templates,
+2. replace placeholders,
+3. update the facts file,
+4. apply one skill,
+5. add or update tests,
+6. run validation.
+
+The quickstart should be short enough for an agent or human to follow without
+inferring repository conventions from the implementation.
+
+** Repository conventions
+
+- =EXT= means the bare file extension without a leading dot. For example, use =toy=
+  as the placeholder value, never =.toy=.
+- File prose may say =.toy= only when referring to real filenames or glob patterns,
+  such as =basic.toy= or =*.toy=.
+- Skill files run from =00-create-basic-mode.md= through =17-polish-package.md=.
+- Skill =15= is =15-add-syntax-propertize.md=, skill =16= is
+  =16-add-treesit-mode.md=, and skill =17= is =17-polish-package.md=.
+- The toy example applies skills =00= through =05=.
+
+** Facts file role
+
+=LANG-facts.el= is the plain-Elisp source of reusable language facts. Skills that add
+language knowledge must update it. Mode code may derive static data such as keywords,
+builtins, Eldoc strings, and tool names from it, but the framework must not introduce
+runtime code generation or a separate YAML/JSON schema.
+
+** Validation should work for generated modes
+
+The root =Makefile= should validate the toy example by default and support generated
+modes through variables:
+
+- =MODE_DIR ?= examples/toy-mode=
+- =MODE ?= toy=
+
+Agents should be able to run =make test MODE_DIR=path/to/mode MODE=foo= and =make
+compile MODE_DIR=path/to/mode MODE=foo= for generated modes.
+
+** Commands should be discoverable without global bindings
+
+Templates should define a local mode keymap. Skills may add mode-local bindings for
+commands such as run and format. The template should rely on the
+=define-derived-mode= convention that =LANG-mode-map= is used as the mode keymap.
+Global keybindings remain forbidden.
+
+** Syntax propertize is optional but supported
+
+Most MVP modes should use syntax tables only. A separate optional skill should cover
+=syntax-propertize-function= for languages where comments or strings cannot be modeled
+accurately by a syntax table alone.
+
+* Deliverables
+
+Implement the following repository structure:
+
+#+begin_example
+minimal-mode-kit/
+  AGENTS.md
+  README.md
+  Makefile
+
+  templates/
+    lang-mode.el
+    lang-mode-test.el
+    lang-facts.el
+
+  skills/
+    00-create-basic-mode.md
+    01-add-syntax-table.md
+    02-add-comments.md
+    03-add-font-lock.md
+    04-add-indentation.md
+    05-add-imenu.md
+    06-add-outline.md
+    07-add-beginning-end-of-defun.md
+    08-add-completion-at-point.md
+    09-add-eldoc.md
+    10-add-xref.md
+    11-add-flymake.md
+    12-add-compilation-mode.md
+    13-add-run-command.md
+    14-add-format-command.md
+    15-add-syntax-propertize.md
+    16-add-treesit-mode.md
+    17-polish-package.md
+
+  examples/
+    toy-mode/
+      toy-mode.el
+      toy-mode-test.el
+      toy-facts.el
+      samples/
+        basic.toy
+        font-lock.toy
+        indentation.toy
+        imenu.toy
+#+end_example
+
+* Implementation Milestones
+
+** DONE Minimum support
+
+Goal: create a small but useful generated major mode with core editing behavior and a
+repeatable agent workflow.
+
+Includes:
+
+- Repository foundation: =README.md=, =AGENTS.md=, parameterized =Makefile=,
+  =templates/=, =skills/=, and =examples/toy-mode/=.
+- Base templates: =templates/lang-mode.el=, =templates/lang-mode-test.el=, and
+  =templates/lang-facts.el=.
+- Toy example mode created from the templates.
+- Core skills =00= through =05=: basic mode, syntax table, comments, font-lock,
+  indentation, and imenu.
+
+Acceptance criteria:
+
+- =README.md= includes a quickstart for creating a generated mode from the templates.
+- =make test= and =make compile= validate the toy mode by default and support
+  =MODE_DIR= and =MODE= for generated modes.
+- Template files use =LANG=, =LANGNAME=, and bare =EXT= placeholders consistently.
+- Template mode derives from =prog-mode=, has lexical binding, defines customization,
+  a local keymap, syntax table, font-lock placeholder, indentation placeholder, and
+  an autoloaded =auto-mode-alist= entry.
+- =toy-mode.el= loads under =emacs -Q --batch=, byte-compiles, and passes ERT tests
+  for mode activation, comments, strings, font-lock, indentation, and imenu.
+- Core skill documents are narrow, independently applicable, include tests and
+  validation commands, and forbid external dependencies.
+
+** TODO Broad support
+
+Goal: cover the editing, navigation, and optional tool integrations that most practical
+major modes need before tree-sitter or package polish.
+
+Includes:
+
+- Navigation and editing skills =06= through =10=: outline, beginning/end-of-defun,
+  completion-at-point, Eldoc, and current-buffer xref.
+- Tool integration skills =11= through =14=: Flymake, compilation-mode integration,
+  run command, and format command.
+- Optional syntax propertize skill =15= for languages where syntax tables are not
+  accurate enough.
+
+Acceptance criteria:
+
+- Completion starts with keywords, builtins, and optional current-buffer symbols only.
+- Eldoc is static or derived from the facts file and follows Emacs 29 callback
+  conventions without blocking.
+- Xref starts with current-buffer definitions and defines the minimal required backend
+  methods.
+- External tools are optional, checked with =executable-find=, and never run on load.
+- Flymake process backends are asynchronous, test diagnostic parsing separately, and
+  handle cancellation or stale process output.
+- Run and format commands are interactive, may use only mode-local keybindings, and
+  are not installed into save hooks by default.
+- Syntax propertize is documented as optional and used only when syntax tables cannot
+  model comments, strings, or escapes correctly.
+
+** TODO Full support
+
+Goal: complete the framework for polished packages, including optional tree-sitter
+support while preserving the regex/basic mode path.
+
+Includes:
+
+- Optional tree-sitter skill =16=.
+- Package polish skill =17=.
+- Final validation across the toy mode and at least one candidate language from each
+  validation tier listed below.
+
+Acceptance criteria:
+
+- Tree-sitter support is separate in =LANG-ts-mode.el= and never removes the regex/basic
+  =LANG-mode=.
+- Tree-sitter setup uses Emacs 29 =treesit= APIs and no-ops cleanly when the grammar is
+  unavailable.
+- Package polish checks headers, Commentary, autoload cookies, defgroup/defcustoms,
+  byte compilation, ERT tests, no global keybindings, no advice, and no unexpected
+  load-time side effects.
+- All skill documents =00= through =17= exist and are detailed enough for Codex to apply
+  them one at a time.
+- The framework still uses only Emacs 29+ built-ins and introduces no external Emacs
+  package dependencies.
+
+* Candidate Languages For Validation
+
+These languages are suggestions for testing the framework design. They do not all need
+to become committed examples, but the skill documents should be concrete enough to
+handle them.
+
+** Minimum support candidates
+
+- INI-style configuration: section headings, key/value pairs, comment syntax, simple
+  imenu, and no indentation complexity.
+- Dockerfile-like directive language: uppercase instructions, line comments, simple
+  completion, and compilation-style diagnostics.
+- Toy C-like language: braces, line and block comments, strings with escapes, function
+  definitions, variable definitions, and brace indentation.
+
+** Broad support candidates
+
+- Makefile-like language: target definitions, variable assignments, command recipes,
+  indentation-sensitive lines, imenu, completion, and compilation errors.
+- SQL subset: keywords, builtin functions, string/comment syntax, statement navigation,
+  simple completion, and optional formatter integration.
+- Markdown fenced-code metadata subset: headings, outline integration, comments absent
+  or limited, imenu, and syntax-propertize pressure around fences.
+
+** Full support candidates
+
+- JavaScript-like language: nested braces, comments, strings/templates, function and
+  variable definitions, Flymake/run/format tool hooks, and a plausible tree-sitter path.
+- Python-like language: indentation-sensitive structure, comments, strings, def/class
+  navigation, completion, Eldoc, and a tree-sitter variant.
+- Rust-like language: nested syntax, comments, strings, attributes/macros, imenu/xref
+  pressure, external compiler diagnostics, and tree-sitter validation.
+
+* File Contents To Implement
+
+** AGENTS.md
+
+Create =AGENTS.md= with the following content:
+
+#+begin_src markdown
+# Agent Instructions
+
+This repository creates Emacs major modes incrementally using skill documents.
+
+Rules:
+
+1. Use only Emacs 29+ built-ins.
+2. Apply one skill at a time.
+3. Do not add external package dependencies.
+4. Do not rewrite unrelated features.
+5. Update the language facts file when adding language knowledge.
+6. Add or update ERT tests for every feature.
+7. Prefer conservative behavior over clever behavior.
+8. Do not mutate global Emacs state except autoloaded `auto-mode-alist` registration.
+9. Do not add advice.
+10. Do not add global keybindings; use mode-local keymaps for commands.
+11. Keep regex-based modes and tree-sitter modes separate.
+12. Run tests after each feature.
+
+A feature is complete only when:
+
+- the mode byte-compiles,
+- relevant ERT tests pass,
+- the feature is wired into `define-derived-mode`,
+- the code is idiomatic and small.
+#+end_src
+
+** Makefile
+
+Create =Makefile=:
+
+#+begin_src makefile
+EMACS ?= emacs
+MODE_DIR ?= examples/toy-mode
+MODE ?= toy
+MODE_FILE := $(MODE_DIR)/$(MODE)-mode.el
+TEST_FILE := $(MODE_DIR)/$(MODE)-mode-test.el
+
+.PHONY: test compile clean
+
+test:
+	$(EMACS) -Q --batch -L $(MODE_DIR) \
+	  -l $(TEST_FILE) \
+	  -f ert-run-tests-batch-and-exit
+
+compile:
+	$(EMACS) -Q --batch -L $(MODE_DIR) \
+	  -f batch-byte-compile $(MODE_FILE)
+
+clean:
+	find . -name "*.elc" -delete
+#+end_src
+
+** Template: templates/lang-mode.el
+
+#+begin_src emacs-lisp
+;;; LANG-mode.el --- Major mode for LANGNAME -*- lexical-binding: t; -*-
+
+;; Keywords: languages
+;; Package-Requires: ((emacs "29.1"))
+
+;;; Commentary:
+
+;; Major mode for editing LANGNAME files.
+
+;;; Code:
+
+(require 'cl-lib)
+
+(defgroup LANG nil
+  "Major mode for LANGNAME."
+  :group 'languages)
+
+(defcustom LANG-indent-offset 4
+  "Indentation offset for `LANG-mode'."
+  :type 'integer
+  :safe #'integerp)
+
+(defvar LANG-mode-map
+  (let ((map (make-sparse-keymap)))
+    map)
+  "Keymap for `LANG-mode'.")
+
+(defvar LANG-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    table)
+  "Syntax table for `LANG-mode'.")
+
+(defconst LANG-font-lock-keywords
+  nil
+  "Font-lock keywords for `LANG-mode'.")
+
+(defun LANG-indent-line ()
+  "Indent current line as LANGNAME code."
+  (interactive)
+  (let ((pos (- (point-max) (point))))
+    (indent-line-to 0)
+    (when (> (- (point-max) pos) (point))
+      (goto-char (- (point-max) pos)))))
+
+;;;###autoload
+(define-derived-mode LANG-mode prog-mode "LANGNAME"
+  "Major mode for editing LANGNAME files."
+  :syntax-table LANG-mode-syntax-table
+  (setq-local font-lock-defaults '(LANG-font-lock-keywords))
+  (setq-local indent-line-function #'LANG-indent-line))
+
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.EXT\\'" . LANG-mode))
+
+(provide 'LANG-mode)
+
+;;; LANG-mode.el ends here
+#+end_src
+
+** Template: templates/lang-mode-test.el
+
+#+begin_src emacs-lisp
+;;; LANG-mode-test.el --- Tests for LANG-mode -*- lexical-binding: t; -*-
+
+(require 'ert)
+(require 'LANG-mode)
+
+(defmacro LANG-test--with-buffer (text &rest body)
+  "Create temp LANGNAME buffer with TEXT and evaluate BODY."
+  (declare (indent 1))
+  `(with-temp-buffer
+     (insert ,text)
+     (LANG-mode)
+     (goto-char (point-min))
+     (font-lock-ensure)
+     ,@body))
+
+(ert-deftest LANG-mode-basic-test ()
+  (LANG-test--with-buffer ""
+    (should (derived-mode-p 'LANG-mode))))
+
+(provide 'LANG-mode-test)
+
+;;; LANG-mode-test.el ends here
+#+end_src
+
+** Template: templates/lang-facts.el
+
+#+begin_src emacs-lisp
+;;; LANG-facts.el --- Language facts for LANGNAME -*- lexical-binding: t; -*-
+
+(defconst LANG-facts
+  '(:language "LANGNAME"
+    :extensions ("EXT")
+
+    :comments
+    (:line nil
+     :block-start nil
+     :block-end nil)
+
+    :strings
+    (:delimiters nil
+     :escape nil)
+
+    :keywords nil
+    :builtins nil
+
+    :definitions
+    (:function nil
+     :type nil
+     :variable nil)
+
+    :indentation
+    (:style nil
+     :offset 4)
+
+    :tools
+    (:compiler nil
+     :formatter nil
+     :repl nil))
+  "Language facts for LANGNAME.")
+
+(provide 'LANG-facts)
+
+;;; LANG-facts.el ends here
+#+end_src
+
+* Example Toy Mode Requirements
+
+Implement =examples/toy-mode/toy-mode.el= with these features by applying skills
+=00= through =05= manually:
+
+- derived from =prog-mode=
+- syntax table for =//=, =/* */=, strings, and escapes
+- comment variables for =comment-region= and =comment-dwim=
+- font-lock for keywords, builtins, function names, and variable names
+- brace indentation
+- imenu for =func NAME= definitions
+
+Implement =examples/toy-mode/toy-mode-test.el= with tests for:
+
+- basic mode activation
+- line comment syntax via =syntax-ppss=
+- string syntax via =syntax-ppss=
+- keyword face
+- function-name face
+- indentation fixture
+- imenu names
+
+* Skill Document Standard Format
+
+Every skill file must use this format:
+
+#+begin_src markdown
+# Skill: <Name>
+
+## Goal
+
+One paragraph describing the feature.
+
+## When to use
+
+State prerequisites and expected mode state.
+
+## Allowed files
+
+List files the agent may edit.
+
+## Built-in Emacs APIs
+
+List only Emacs 29+ built-ins relevant to this skill.
+
+## Requirements
+
+Concrete requirements.
+
+## Steps
+
+Numbered implementation steps.
+
+## Tests
+
+Required ERT tests and suggested helper functions.
+
+## Anti-patterns
+
+Explicitly forbid common bad implementations.
+
+## Validation
+
+Commands to run and expected results.
+#+end_src
+
+* Skill Details
+
+** 00-create-basic-mode.md
+
+Must instruct the agent to instantiate templates and create the initial language package.
+
+Must not add highlighting, indentation logic, xref, Flymake, tree-sitter, or external tooling.
+
+** 01-add-syntax-table.md
+
+Must use:
+
+- =make-syntax-table=
+- =modify-syntax-entry=
+- =syntax-ppss=
+
+Must include exact recipes for common cases such as C-style =//= and =/* */= comments,
+double-quoted strings, and backslash escapes.
+
+Must test:
+
+- point in comment: =(nth 4 (syntax-ppss))=
+- point in string: =(nth 3 (syntax-ppss))=
+
+** 02-add-comments.md
+
+Must set buffer-local:
+
+- =comment-start=
+- =comment-end=
+- =comment-start-skip=
+- optionally =comment-use-syntax=
+
+Must not define custom comment commands unless necessary.
+
+** 03-add-font-lock.md
+
+Must use:
+
+- =font-lock-defaults=
+- =regexp-opt=
+- built-in font-lock faces
+
+Must test faces using =font-lock-ensure= and =get-text-property=.
+
+Must handle face values that may be symbols or lists.
+
+** 04-add-indentation.md
+
+Must use:
+
+- =indent-line-function=
+- =syntax-ppss=
+- =back-to-indentation=
+- =indent-region= in tests
+
+For brace languages, ignore braces in strings/comments.
+
+Do not call external formatters.
+
+** 05-add-imenu.md
+
+Must use:
+
+- =imenu-generic-expression= for simple one-line definitions
+- =imenu-create-index-function= only when necessary
+
+Tests may use =imenu--make-index-alist=.
+
+** 06-add-outline.md
+
+Must set buffer-local:
+
+- =outline-regexp=
+- optionally =outline-level=
+
+Must not enable =outline-minor-mode= automatically.
+
+** 07-add-beginning-end-of-defun.md
+
+Must set buffer-local:
+
+- =beginning-of-defun-function=
+- optionally =end-of-defun-function=
+
+Prefer conservative movement.
+
+** 08-add-completion-at-point.md
+
+Must use:
+
+- =completion-at-point-functions=
+- =bounds-of-thing-at-point=
+- =syntax-ppss=
+
+Start with keywords and builtins. Optional current-buffer symbol completion is allowed.
+
+Must not use company, corfu, cape, or external packages.
+
+** 09-add-eldoc.md
+
+Must use:
+
+- =eldoc-documentation-functions=
+
+Eldoc data should be static or derived from the facts file. It must not block or call network/process APIs.
+The documentation function must follow Emacs 29 Eldoc callback conventions and must
+return promptly when no documentation is available.
+
+** 10-add-xref.md
+
+Must use:
+
+- =xref-backend-functions=
+- =cl-defmethod=
+- =xref-make=
+- =xref-make-file-location=
+
+Start with current-buffer definitions. Project-wide xref is optional and should be a later refinement.
+The skill must define the minimal required backend methods for identifier lookup and
+definition lookup, and tests should call those methods directly where practical.
+
+** 11-add-flymake.md
+
+Must use:
+
+- =flymake-diagnostic-functions=
+- =flymake-make-diagnostic=
+- =make-process= for asynchronous checkers
+
+Must test diagnostic parsing separately from process execution.
+
+Must handle missing tools gracefully.
+Must handle cancellation and stale process output so old diagnostics do not overwrite
+newer Flymake reports.
+
+** 12-add-compilation-mode.md
+
+Must use:
+
+- =compilation-error-regexp-alist=
+- =compilation-error-regexp-alist-alist=
+- =compile=
+
+Must not overwrite global compilation variables destructively.
+
+** 13-add-run-command.md
+
+Must add optional interactive run command.
+
+Must use:
+
+- =compile=
+- =shell-quote-argument=
+- =read-shell-command= if prompting
+
+Must not run automatically on save.
+
+** 14-add-format-command.md
+
+Must add optional interactive format command.
+
+May use:
+
+- =call-process-region=
+- =executable-find=
+- =use-region-p=
+
+Must not add =before-save-hook= by default.
+
+** 15-add-syntax-propertize.md
+
+Must use:
+
+- =syntax-propertize-function=
+- =syntax-propertize-rules= when it keeps the implementation simple
+- =syntax-ppss= in tests
+
+Use this skill only when a syntax table alone cannot correctly model comments,
+strings, or escapes. Do not add parser-like behavior unrelated to syntax state.
+
+** 16-add-treesit-mode.md
+
+Must create a separate =LANG-ts-mode.el=.
+
+Must use Emacs 29 built-in APIs:
+
+- =treesit-ready-p=
+- =treesit-parser-create=
+- =treesit-font-lock-rules=
+- =treesit-major-mode-setup=
+
+Must not remove the regex/basic mode.
+
+Must check grammar availability before enabling tree-sitter behavior.
+Must no-op cleanly when the grammar is unavailable.
+
+** 17-polish-package.md
+
+Must check:
+
+- lexical binding
+- file headers
+- Commentary
+- Code section
+- autoload cookies
+- defgroup
+- defcustoms
+- byte compilation
+- ERT tests
+- no global keybindings
+- no advice
+- no unexpected side effects on load
+
+* Validation Commands
+
+Run after every meaningful change:
+
+#+begin_src sh
+make test
+make compile
+#+end_src
+
+For generated modes, pass =MODE_DIR= and =MODE=:
+
+#+begin_src sh
+make test MODE_DIR=path/to/mode MODE=foo
+make compile MODE_DIR=path/to/mode MODE=foo
+#+end_src
+
+Direct commands:
+
+#+begin_src sh
+emacs -Q --batch -L examples/toy-mode \
+  -l examples/toy-mode/toy-mode-test.el \
+  -f ert-run-tests-batch-and-exit
+
+emacs -Q --batch -L examples/toy-mode \
+  -f batch-byte-compile examples/toy-mode/toy-mode.el
+#+end_src
+
+* Coding Conventions
+
+** Naming
+
+For language prefix =foo=:
+
+- mode command: =foo-mode=
+- local keymap: =foo-mode-map=
+- syntax table: =foo-mode-syntax-table=
+- font-lock: =foo-font-lock-keywords=
+- indentation function: =foo-indent-line=
+- test macro: =foo-test--with-buffer=
+- facts feature: =foo-facts=
+
+** File sections
+
+Generated mode files should use this order:
+
+#+begin_example
+;;; Header
+;;; Commentary:
+;;; Code:
+
+(require ...)
+
+(defgroup ...)
+
+;;;; Customization
+;;;; Keymap
+;;;; Syntax
+;;;; Syntax propertize
+;;;; Language data
+;;;; Font lock
+;;;; Indentation
+;;;; Imenu
+;;;; Outline
+;;;; Navigation
+;;;; Completion
+;;;; Eldoc
+;;;; Xref
+;;;; Flymake
+;;;; Commands
+;;;; Mode definition
+;;;; File associations
+
+(provide ...)
+;;; file ends here
+#+end_example
+
+** Avoid global side effects
+
+Allowed global side effect:
+
+- autoloaded addition to =auto-mode-alist=
+
+Allowed buffer-local and mode-local behavior:
+
+- local mode keymaps
+- buffer-local mode variables set inside =define-derived-mode=
+
+Forbidden unless a skill explicitly asks for it:
+
+- global keybindings
+- advice
+- global hooks
+- modifying unrelated package variables
+- starting processes on load
+- network access
+
+* Non-goals
+
+Do not implement these in the MVP:
+
+- LSP/Eglot integration
+- external package dependencies
+- package-lint integration
+- custom annotation-based font-lock test framework
+- YAML/JSON parsing
+- project-wide persistent symbol index
+- automatic skill runner
+- in-process security sandbox
+
+* Implementation TODO List
+
+** DONE Minimum support: normalize conventions
+
+Resolve naming and numbering before creating files: =EXT= is bare, skill files run
+=00= through =17=, and the toy example applies skills =00= through =05=.
+
+** DONE Minimum support: create README, AGENTS, and parameterized Makefile
+
+Write the quickstart, repository rules, and validation targets that default to the toy
+mode while supporting =MODE_DIR= and =MODE= for generated modes.
+
+** DONE Minimum support: create base templates with facts file and local mode map
+
+Create =lang-mode.el=, =lang-mode-test.el=, and =lang-facts.el= with lexical binding,
+ordinary Emacs Lisp structure, placeholders, and no external dependencies.
+
+** DONE Minimum support: instantiate toy facts, toy mode, samples, and tests
+
+Build the toy example from the templates, add sample files, and cover mode activation,
+syntax, font-lock, indentation, and imenu.
+
+** DONE Minimum support: write core skills 00 through 05
+
+Document basic mode creation, syntax table setup, comments, font-lock, indentation,
+and imenu with required tests and validation commands.
+
+** TODO Broad support: write navigation/editing skills 06 through 10
+
+Document outline, beginning/end-of-defun, completion-at-point, Eldoc, and current-buffer
+xref integrations.
+
+** TODO Broad support: write tool integration skills 11 through 14
+
+Document optional Flymake, compilation, run, and format commands, keeping external tools
+optional and checked before use.
+
+** TODO Broad support: write optional syntax-propertize skill 15
+
+Document when and how to use =syntax-propertize-function= without turning it into a
+parser or replacing simpler syntax tables unnecessarily.
+
+** TODO Full support: write optional tree-sitter skill 16
+
+Document the separate =LANG-ts-mode.el= path and grammar-availability checks.
+
+** TODO Full support: write package polish skill 17
+
+Document final package checks for headers, Commentary, autoloads, customization,
+byte-compilation, tests, and load-time side effects.
+
+** TODO Full support: run final validation and update acceptance checklist
+
+Run =make test= and =make compile= for the toy mode, review at least one candidate
+language from each validation tier, verify all skill documents exist, and confirm the
+repository still uses only Emacs 29+ built-ins.
+
+* Final Acceptance Criteria
+
+The project is complete when:
+
+- The repository structure exists.
+- The templates exist.
+- The toy mode exists and passes tests.
+- =make test= passes.
+- =make compile= passes.
+- All skill documents 00 through 17 exist.
+- Skill documents are detailed enough for Codex to apply them one at a time.
+- At least one suggested language from each validation tier has been reviewed against
+  the skill set.
+- The project uses only Emacs 29+ built-ins.
+- No external Emacs package dependency is introduced.

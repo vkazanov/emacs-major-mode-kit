@@ -1,0 +1,8 @@
+func main() {
+    let ready = "yes";
+    if ready {
+        print(ready);
+    } else {
+        return;
+    }
+}

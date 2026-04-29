@@ -7,14 +7,14 @@ current-buffer symbols.
 
 ## When to use
 
-Use after syntax state is reliable and the facts source contains keyword, builtin, or
+Use after syntax state is reliable and the language overview contains keyword, builtin, or
 simple symbol data that should be offered as completions.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Facts source when completion facts need to be updated.
+- Language overview when completion details need to be updated.
 - Sample files used by completion tests.
 
 ## Built-in Emacs APIs
@@ -30,7 +30,7 @@ simple symbol data that should be offered as completions.
 
 ## Requirements
 
-- Start with keywords and builtins from the facts source.
+- Start with keywords and builtins from the language overview.
 - Optionally include current-buffer symbols discovered with a conservative scan.
 - Define a language-specific function such as `LANG-completion-at-point`.
 - Add the function to `completion-at-point-functions` buffer-locally inside
@@ -43,9 +43,9 @@ simple symbol data that should be offered as completions.
 
 ## Steps
 
-1. Add or confirm `:keywords` and `:builtins` facts.
+1. Add or confirm keyword and builtin details in the overview.
 2. For common CAPF shape, adapt `templates/snippets/08-capf.md`.
-3. Define a completion collection from those facts.
+3. Define a completion collection from those details.
 4. If useful, add a helper that collects current-buffer symbols and ignores strings and
    comments with `syntax-ppss`.
 5. Implement `LANG-completion-at-point` using `bounds-of-thing-at-point`.

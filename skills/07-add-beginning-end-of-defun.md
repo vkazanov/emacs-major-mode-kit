@@ -7,14 +7,14 @@ move across the language's top-level definitions.
 
 ## When to use
 
-Use after the mode has reliable syntax state and the facts source contains a conservative
+Use after the mode has reliable syntax state and the language overview contains a conservative
 definition regexp, such as a one-line function, type, section, or block declaration.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Facts source when definition facts need to be updated.
+- Language overview when definition details need to be updated.
 - Sample files used by defun navigation tests.
 
 ## Built-in Emacs APIs
@@ -33,7 +33,7 @@ definition regexp, such as a one-line function, type, section, or block declarat
 
 ## Requirements
 
-- Store reusable definition regexps in the facts source.
+- Store reusable definition regexps in the language overview.
 - Define a language-specific beginning function such as
   `LANG-beginning-of-defun`.
 - Set `beginning-of-defun-function` buffer-locally inside `define-derived-mode`.
@@ -51,7 +51,7 @@ definition regexp, such as a one-line function, type, section, or block declarat
 
 ## Steps
 
-1. Add or confirm the definition regexp and name capture in the facts source.
+1. Add or confirm the definition regexp and name capture in the language overview.
 2. For reusable syntax-aware definition scanning, adapt
    `templates/snippets/07-definition-scanning.md`.
 3. Implement a helper that searches for definition starts in a direction and rejects

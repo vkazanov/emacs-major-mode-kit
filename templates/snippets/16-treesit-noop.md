@@ -3,8 +3,7 @@
 Skill: `16-add-treesit-mode.md`
 
 Use only when the tree-sitter language symbol is known. `LANG-ts-mode.el` should
-require `LANG-mode` and `treesit`; after polish it reads inlined facts through
-`LANG-mode`.
+require `LANG-mode` and `treesit`.
 
 ```elisp
 (require 'treesit)

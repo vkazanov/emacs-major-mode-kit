@@ -43,64 +43,28 @@
     table)
   "Syntax table for `toy-mode'.")
 
-;;;; Language data
+;;;; Comments
 
-(defconst toy-facts
-  '(:language "Toy"
-    :extensions ("toy")
+(defconst toy--line-comment "//"
+  "Line comment opener for Toy.")
 
-    :comments
-    (:line "//"
-     :block-start "/*"
-     :block-end "*/")
-
-    :strings
-    (:delimiters ("\"")
-     :escape "\\")
-
-    :keywords ("else" "func" "if" "let" "return")
-    :builtins ("print")
-
-    :definitions
-    (:function "\\_<func\\_>\\s-+\\([[:alpha:]_][[:alnum:]_]*\\)"
-     :type nil
-     :variable "\\_<let\\_>\\s-+\\([[:alpha:]_][[:alnum:]_]*\\)")
-
-    :indentation
-    (:style braces
-     :offset 4)
-
-    :tools
-    (:compiler nil
-     :formatter nil
-     :repl nil))
-  "Language facts for Toy.")
-
-(defconst toy--comments
-  (plist-get toy-facts :comments)
-  "Comment facts for Toy.")
+;;;; Highlighting and definitions
 
 (defconst toy--keywords
-  (plist-get toy-facts :keywords)
-  "Keyword facts for Toy.")
+  '("else" "func" "if" "let" "return")
+  "Keywords for Toy.")
 
 (defconst toy--builtins
-  (plist-get toy-facts :builtins)
-  "Builtin facts for Toy.")
-
-(defconst toy--definitions
-  (plist-get toy-facts :definitions)
-  "Definition facts for Toy.")
+  '("print")
+  "Builtins for Toy.")
 
 (defconst toy--function-definition-regexp
-  (plist-get toy--definitions :function)
+  "\\_<func\\_>\\s-+\\([[:alpha:]_][[:alnum:]_]*\\)"
   "Regexp matching Toy function definitions.")
 
 (defconst toy--variable-definition-regexp
-  (plist-get toy--definitions :variable)
+  "\\_<let\\_>\\s-+\\([[:alpha:]_][[:alnum:]_]*\\)"
   "Regexp matching Toy variable definitions.")
-
-;;;; Font lock
 
 (defconst toy-font-lock-keywords
   `((,(regexp-opt toy--keywords 'symbols) . font-lock-keyword-face)
@@ -165,7 +129,7 @@
   (setq-local font-lock-defaults '(toy-font-lock-keywords))
   (setq-local indent-line-function #'toy-indent-line)
   (setq-local indent-tabs-mode nil)
-  (setq-local comment-start (concat (plist-get toy--comments :line) " "))
+  (setq-local comment-start (concat toy--line-comment " "))
   (setq-local comment-end "")
   (setq-local comment-start-skip "\\(?://+\\|/\\*+\\)\\s *")
   (setq-local comment-use-syntax t)

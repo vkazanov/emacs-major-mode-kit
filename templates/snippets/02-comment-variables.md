@@ -4,7 +4,7 @@ Skill: `02-add-comments.md`
 
 Use after syntax state already recognizes comments.
 
-Common opener facts:
+Common opener details:
 
 | delimiter | kind | `comment-start` example | `comment-end` |
 |---|---|---|---|

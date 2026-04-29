@@ -4,7 +4,7 @@ Skills: `07-add-beginning-end-of-defun.md`, `10-add-xref.md`
 
 Use when definition matches are regular enough for current-buffer regexps.
 
-## Shared definition facts
+## Shared definition details
 
 ```elisp
 (defconst LANG--definition-start-regexp LANG--function-definition-regexp

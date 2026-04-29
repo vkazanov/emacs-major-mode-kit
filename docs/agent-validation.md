@@ -15,7 +15,7 @@ codex --ask-for-approval never "Summarize the current instructions."
 
 Expected: Codex summarizes guidance from `AGENTS.md`, including skill order,
 `skills/index.md`, source-backed intake for real languages, `MODE_DIR`/`MODE`
-validation, optional-skill skips, facts lifecycle, and Emacs 29+ built-ins.
+validation, optional-skill skips, the language overview, and Emacs 29+ built-ins.
 
 For Claude Code, `CLAUDE.md` imports `AGENTS.md`. Start Claude Code from the repository
 root and run `/memory`.
@@ -34,7 +34,7 @@ Create examples/mini-hcl-mode for a Mini HCL language subset by applying skills 
 through 05 in order, then skill 17 as the final polish step. Use LANG=mini-hcl,
 LANGNAME="Mini HCL", EXT=hcl, MODE_DIR=examples/mini-hcl-mode, MODE=mini-hcl.
 
-Language facts:
+Language details:
 - comments: #, //, and /* */
 - strings: double-quoted with backslash quoting
 - keywords: resource, variable, output, module, true, false
@@ -43,9 +43,9 @@ Language facts:
   output "NAME", and module "NAME"
 - indentation: braces, offset 2
 
-Add samples and ERT tests for mode activation, comments, strings, font-lock,
-indentation, and imenu. Run validation after each applied skill, inline the facts
-source during skill 17, and clean bytecode at the end.
+Create reference/language-overview.md. Add samples and ERT tests for mode activation,
+comments, strings, font-lock, indentation, and imenu. Run validation after each
+applied skill and clean bytecode at the end.
 ```
 
 Accept the result only if this passes:
@@ -70,15 +70,16 @@ language support.
 
 ## Source-Backed Trial Prompt
 
-Use this shape when testing a real language whose facts are not all supplied:
+Use this shape when testing a real language whose details are not all supplied:
 
 ```text
 Create examples/test-LANG-mode for LANGNAME using official language documentation.
 First complete the source-backed intake from docs/real-language-intake.md. Record
-official sources in MODE_DIR/reference/sources.md, create small curated fixtures under
-MODE_DIR/samples/, then apply the broadest applicable skill set. Do not invent
-formatter commands, diagnostics, run commands, or tree-sitter grammars; record skipped
-optional skills with reasons. Finish with skill 17 and run make validate-polished.
+official sources in MODE_DIR/reference/language-overview.md, create small curated
+fixtures under MODE_DIR/samples/, then apply the broadest applicable skill set. Do
+not invent formatter commands, diagnostics, run commands, or tree-sitter grammars;
+record skipped optional skills with reasons. Finish with skill 17 and run make
+validate-polished.
 ```
 
 The trial passes only if the agent records sources, creates small fixtures, applies
@@ -88,21 +89,20 @@ polished mode.
 ## Advanced Feature Prompt Shape
 
 Use this compact shape when testing later optional skills. Replace placeholders with
-real language facts; do not invent tools, grammars, or command output.
+real language details; do not invent tools, grammars, or command output.
 
 ```text
 Extend MODE_DIR for LANGNAME by applying skills 11 and 16 in ascending order, then
-skill 17. The mode is already polished, so update the inlined LANG-facts constant and
-do not recreate a runtime LANG-facts.el file.
+skill 17.
 
-Language facts:
+Language details:
 - diagnostics: TOOL command, representative output, and severity mapping
 - tree-sitter: grammar language symbol, query needs, and opt-in LANG-ts-mode policy
 
-Add ERT tests that stub executable-find and tree-sitter readiness/setup functions.
-The missing diagnostic tool path must call REPORT-FN with no diagnostics and must not
-start a process. Run make validate after each non-final applied skill; after skill 17,
-run make validate-polished.
+Update reference/language-overview.md. Add ERT tests that stub executable-find and
+tree-sitter readiness/setup functions. The missing diagnostic tool path must call
+REPORT-FN with no diagnostics and must not start a process. Run make validate after
+each non-final applied skill; after skill 17, run make validate-polished.
 ```
 
 ## Skip-Semantics Checks
@@ -110,9 +110,9 @@ run make validate-polished.
 Use these dry-run review scenarios to check optional-skill policy:
 
 - `00-17` with no formatter and no known tree-sitter grammar should skip skills `14`
-  and `16` with reasons.
-- Sparse `14` with no formatter should ask once for formatter facts, then skip if they
-  remain absent.
+  and `16` with reasons in the overview.
+- Sparse `14` with no formatter should ask once for formatter details, then skip if
+  they remain absent.
 - Sparse `16` with a known grammar that is not installed locally may create
   `LANG-ts-mode.el`, but tests must stub missing grammar behavior.
 - Tool-backed skills with known commands absent locally should use command-time checks
@@ -131,19 +131,18 @@ Record results with this template:
 - Date:
 - Prompt target:
 - Instruction loading confirmed:
+- Language overview created:
 - Sources recorded:
 - Fixture provenance:
 - Skills applied in order:
 - Skills skipped with reasons:
 - Validation after each applied skill:
 - Final `make validate-polished`:
-- Facts source inlined:
-- Runtime facts file absent:
 - Unrelated edits:
 - Notes:
 ```
 
 The trial passes when the agent reads the instructions, opens the relevant skill files,
 uses `skills/index.md` for planning, keeps `EXT` bare, edits only the generated files,
-avoids external dependencies and global keybindings, inlines the final facts source
-into the mode file, leaves no runtime facts file, and produces passing validation.
+avoids external dependencies and global keybindings, creates the language overview,
+and produces passing validation.

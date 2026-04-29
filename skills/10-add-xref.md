@@ -7,14 +7,14 @@ buffer only.
 
 ## When to use
 
-Use after the mode has reliable syntax state and reusable definition facts, and after
+Use after the mode has reliable syntax state and reusable definition details, and after
 imenu or defun navigation has proven the definition regexp is conservative enough.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Facts source when xref definition facts need to be updated.
+- Language overview when xref definition details need to be updated.
 - Sample files used by xref tests.
 
 ## Built-in Emacs APIs
@@ -33,7 +33,7 @@ imenu or defun navigation has proven the definition regexp is conservative enoug
 ## Requirements
 
 - Require only built-in libraries such as `cl-lib` and `xref` when needed.
-- Store reusable definition regexps and name captures in the facts source.
+- Store reusable definition regexps and name captures in the language overview.
 - Define a language-specific backend function such as `LANG-xref-backend`.
 - Add the backend function to `xref-backend-functions` buffer-locally inside
   `define-derived-mode`.
@@ -46,7 +46,7 @@ imenu or defun navigation has proven the definition regexp is conservative enoug
 
 ## Steps
 
-1. Add or confirm definition facts with a capture group for the definition name.
+1. Add or confirm definition details with a capture group for the definition name.
 2. For common current-buffer xref shape, adapt `templates/snippets/10-xref.md`.
 3. Require `xref` and `cl-lib` in the mode file if they are not already available.
 4. Define `LANG-xref-backend` to return a backend symbol such as `LANG`.

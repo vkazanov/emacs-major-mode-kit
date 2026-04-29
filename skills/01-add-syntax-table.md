@@ -15,7 +15,7 @@ features depend on syntax state.
 
 - Generated mode file.
 - Generated test file.
-- Facts source when comment or string facts need to be recorded.
+- Language overview when comment or string details need to be recorded.
 - Sample files used by syntax tests.
 
 ## Built-in Emacs APIs
@@ -29,7 +29,7 @@ features depend on syntax state.
 
 - Define or update `LANG-mode-syntax-table`.
 - Pass the syntax table to `define-derived-mode` with `:syntax-table`.
-- Record comment and string delimiters in the facts source when they are language facts.
+- Record comment and string delimiters in the language overview.
 - Include exact syntax recipes for common C-style line comments, block comments,
   double-quoted strings, and backslash quoting when the language uses them.
 - When the language has multiple line comment delimiters, include every delimiter
@@ -41,7 +41,7 @@ features depend on syntax state.
 ## Steps
 
 1. Identify line comment, block comment, string delimiter, and backslash syntax from the
-   language facts or samples.
+   language overview or samples.
 2. For common syntax table recipes, adapt `templates/snippets/01-syntax-table.md`.
 3. Update `LANG-mode-syntax-table` with `modify-syntax-entry`.
 4. For C-style `//` and `/* */` comments, use this recipe:
@@ -60,7 +60,7 @@ features depend on syntax state.
    ```
 
    If a delimiter cannot be modeled reliably with syntax table entries, record the
-   fact and defer the case to `15-add-syntax-propertize.md`.
+   detail and defer the case to `15-add-syntax-propertize.md`.
 
 6. For double-quoted strings and backslash quoting, use this recipe:
 

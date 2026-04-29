@@ -14,7 +14,7 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 
 - Generated mode file.
 - Generated test file.
-- Facts source when indentation facts need to be updated.
+- Language overview when indentation details need to be updated.
 - Sample files used by indentation tests.
 
 ## Built-in Emacs APIs
@@ -34,7 +34,7 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 
 - Define a language-specific `LANG-indent-line`.
 - Set `indent-line-function` buffer-locally inside `define-derived-mode`.
-- Store an explicit indentation style and offset in the facts source when useful.
+- Store an explicit indentation style and offset in the language overview when useful.
 - Choose one common shape before implementing: `zero`, `brace`, `continuation`,
   `indentation-sensitive`, `choice-depth`, or another documented conservative rule.
 - For `zero`, always indent to column 0.
@@ -42,7 +42,7 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 - For `continuation`, indent continued statement lines by one offset from the statement
   start and dedent terminators such as `;`, `)`, `]`, or `}` when the language uses them.
 - For `indentation-sensitive`, preserve existing meaningful indentation and only infer
-  indentation for blank/new lines from nearby significant lines or exact block facts.
+  indentation for blank/new lines from nearby significant lines or exact block details.
 - For `choice-depth`, compute indentation from the depth of leading choice/list markers
   and any documented body-continuation rule.
 - Ignore indentation markers inside strings and comments using `syntax-ppss`.
@@ -52,8 +52,8 @@ Use after `01-add-syntax-table.md`, because indentation needs reliable
 ## Steps
 
 1. Choose the simplest indentation rule that matches the language's current scope.
-2. Update indentation facts, such as `:style brace` or `:style continuation` and
-   `:offset 4`.
+2. Update indentation details in the overview, such as brace or continuation style and
+   offset 4.
 3. For common indentation shapes, adapt
    `templates/snippets/04-indentation-recipes.md`.
 4. Implement a helper that calculates indentation for the current line.

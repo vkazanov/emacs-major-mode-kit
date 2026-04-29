@@ -2,12 +2,12 @@
 
 Skill: `09-add-eldoc.md`
 
-Use for static facts-derived documentation only.
+Use for static documentation only.
 
 ```elisp
 (defconst LANG--eldoc
   '(("keyword" . "keyword ARG: short documentation."))
-  "Static Eldoc facts for LANGNAME.")
+  "Static Eldoc details for LANGNAME.")
 
 (defun LANG-eldoc-function (callback &rest _ignored)
   "Return static LANGNAME documentation at point using CALLBACK."

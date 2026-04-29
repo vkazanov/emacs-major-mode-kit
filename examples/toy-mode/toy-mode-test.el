@@ -30,12 +30,6 @@
   (toy-test--with-buffer ""
     (should (derived-mode-p 'toy-mode))))
 
-(ert-deftest toy-mode-facts-inlined-test ()
-  (toy-test--with-buffer ""
-    (should (boundp 'toy-facts))
-    (should-not (featurep 'toy-facts))
-    (should (equal (plist-get toy-facts :language) "Toy"))))
-
 (ert-deftest toy-mode-line-comment-syntax-test ()
   (toy-test--with-buffer "func main() {\n  // comment\n}\n"
     (search-forward "comment")

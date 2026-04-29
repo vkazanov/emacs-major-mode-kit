@@ -19,7 +19,7 @@ sufficient.
 
 - Generated mode file.
 - Generated test file.
-- Facts source when comment, string, or escape facts need to be recorded.
+- Language overview when comment, string, or escape details need to be recorded.
 - Sample files used by syntax propertize tests.
 
 ## Built-in Emacs APIs
@@ -37,11 +37,11 @@ sufficient.
 
 ## Requirements
 
-- Keep the ordinary syntax table as the source of fixed syntax facts.
+- Keep the ordinary syntax table as the source of fixed syntax details.
 - Use syntax propertize only for comments, strings, or escapes that the syntax table
   alone cannot model accurately.
-- Record new language facts about context-sensitive comments, strings, or escapes in
-  the facts source.
+- Record new language details about context-sensitive comments, strings, or escapes in
+  the language overview.
 - Place rules, helpers, and related constants in the generated mode file's
   `;;;; Syntax propertize` section.
 - Define a mode-specific function such as `LANG-mode--syntax-propertize`.
@@ -60,7 +60,7 @@ sufficient.
 ## Steps
 
 1. Identify the exact syntax case that the syntax table alone cannot handle.
-2. Add or update facts for the affected comments, strings, or escapes.
+2. Add or update details for the affected comments, strings, or escapes.
 3. Add a `;;;; Syntax propertize` section if the mode file does not already have one.
 4. Implement `LANG-mode--syntax-propertize` with `syntax-propertize-rules` for simple
    regexp-based delimiter marking, or a small custom function when rules are not

@@ -21,8 +21,8 @@ applied with no-op missing-grammar behavior.
 - New generated tree-sitter mode file, such as `foo-ts-mode.el`.
 - Generated test files, such as `foo-mode-test.el` and optional
   `foo-ts-mode-test.el`.
-- Facts source when tree-sitter language, query, indentation, imenu, or defun
-  facts need to be recorded.
+- Language overview when tree-sitter language, query, indentation, imenu, or defun
+  details need to be recorded.
 - Sample files used by tree-sitter tests.
 
 Do not remove or rename the generated regex/basic mode file.
@@ -52,10 +52,10 @@ Do not remove or rename the generated regex/basic mode file.
 - Make `LANG-ts-mode` derive from `LANG-mode` so existing syntax tables, comments,
   commands, and fallback behavior remain available.
 - Require only built-in Emacs libraries, `LANG-mode`, and `treesit`.
-- Record tree-sitter facts in the facts source, including at least the grammar language
-  symbol used with Emacs tree-sitter APIs.
-- Define a mode-specific language constant such as `LANG-ts-mode--language` from the
-  facts source.
+- Record tree-sitter details in `reference/language-overview.md`, including at least
+  the grammar language symbol used with Emacs tree-sitter APIs.
+- Define a mode-specific language constant such as `LANG-ts-mode--language` directly
+  in the tree-sitter mode file.
 - Keep `LANG-mode` as the file-extension default. `LANG-ts-mode` is opt-in unless a
   later explicit package-polish step documents user-level remapping.
 - Check grammar availability inside `LANG-ts-mode` with
@@ -72,12 +72,11 @@ Do not remove or rename the generated regex/basic mode file.
 
 ## Steps
 
-1. Add tree-sitter facts to the facts source, such as `:treesit (:language LANG ...)`.
+1. Add tree-sitter details to `reference/language-overview.md`.
 2. Create `LANG-ts-mode.el` with lexical binding, normal package headers,
    Commentary, Code, `provide`, and a file footer.
 3. For common missing-grammar behavior, adapt `templates/snippets/16-treesit-noop.md`.
-4. Require `LANG-mode` and `treesit`. Read facts through `LANG-mode` when the base mode
-   is already polished; do not require `LANG-facts` after polish.
+4. Require `LANG-mode` and `treesit`.
 5. Define tree-sitter language data and optional setup constants in a dedicated
    tree-sitter section.
 6. If adding tree-sitter highlighting, define a helper or constant based on

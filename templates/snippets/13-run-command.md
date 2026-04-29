@@ -31,4 +31,4 @@ Mode keymap:
 (define-key map (kbd "C-c C-r") #'LANG-run)
 ```
 
-Do not add a command or keybinding when run command facts are unknown.
+Do not add a command or keybinding when run command details are unknown.

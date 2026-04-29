@@ -14,7 +14,7 @@ that users should be able to invoke from the major mode.
 
 - Generated mode file.
 - Generated test file.
-- Facts source when run tool facts need to be updated.
+- Language overview when run tool details need to be updated.
 - Sample files used by run command tests.
 
 ## Built-in Emacs APIs
@@ -33,7 +33,7 @@ that users should be able to invoke from the major mode.
 
 ## Requirements
 
-- Store runtime, compiler, or test runner commands in the facts source.
+- Store runtime, compiler, or test runner commands in the language overview.
 - Define a command such as `LANG-run` and make it `interactive`.
 - Check tools with `executable-find` when the command runs; never run on load.
 - Build shell commands with `shell-quote-argument` for file names and user-controlled
@@ -46,9 +46,10 @@ that users should be able to invoke from the major mode.
 
 ## Steps
 
-1. Add or confirm run tool facts such as interpreter, runner, or compiler command.
+1. Add or confirm run tool details such as interpreter, runner, or compiler command.
 2. For common run-command shape, adapt `templates/snippets/13-run-command.md`.
-3. Define a helper that builds the run command string from `buffer-file-name` and facts.
+3. Define a helper that builds the run command string from `buffer-file-name` and
+   documented command details.
 4. Make the helper signal a clear `user-error` when there is no current file or the tool
    is missing.
 5. Implement `LANG-run` as an interactive command that calls `compile` or

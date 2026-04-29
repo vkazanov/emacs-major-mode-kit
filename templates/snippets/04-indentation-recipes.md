@@ -2,8 +2,8 @@
 
 Skill: `04-add-indentation.md`
 
-Pick one recipe from the `:indentation :style` fact. Replace token regexps with
-language facts and keep marker checks syntax-aware.
+Pick one recipe from the documented indentation style. Replace token regexps with
+language details and keep marker checks syntax-aware.
 
 ## Shared wrapper
 
@@ -122,7 +122,7 @@ previous significant line opens or continues a statement.
 ## Indentation-sensitive
 
 Use for Python-like languages where indentation is syntax. Preserve existing nonblank
-line indentation unless exact block opener and dedent facts are known.
+line indentation unless exact block opener and dedent details are known.
 
 ```elisp
 (defun LANG-calculate-indentation ()
@@ -134,7 +134,7 @@ line indentation unless exact block opener and dedent facts are known.
       (LANG--previous-code-line-indentation))))
 ```
 
-If exact block opener facts are available, extend only blank/new-line indentation from
+If exact block opener details are available, extend only blank/new-line indentation from
 the previous significant line by one `LANG-indent-offset`; do not rewrite existing
 semantic indentation during broad `indent-region` tests.
 

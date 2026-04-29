@@ -7,14 +7,14 @@ definition names using Emacs font-lock.
 
 ## When to use
 
-Use after `01-add-syntax-table.md` and after the language facts contain the keyword,
+Use after `01-add-syntax-table.md` and after the language details contain the keyword,
 builtin, or definition data needed for highlighting.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Facts source.
+- Language overview.
 - Sample files used by highlighting tests.
 
 ## Built-in Emacs APIs
@@ -31,7 +31,7 @@ builtin, or definition data needed for highlighting.
 
 ## Requirements
 
-- Store reusable language data in the facts source.
+- Store reusable language data in the language overview.
 - Use `regexp-opt` for keyword and builtin lists.
 - Use built-in font-lock faces only.
 - Set `font-lock-defaults` buffer-locally inside `define-derived-mode`.
@@ -41,7 +41,7 @@ builtin, or definition data needed for highlighting.
 
 ## Steps
 
-1. Add or update facts such as `:keywords`, `:builtins`, and simple definition regexps.
+1. Add or update keywords, builtins, and simple definition regexps in the overview.
 2. Define `LANG-font-lock-keywords` in the mode file.
 3. Use `(regexp-opt ITEMS 'symbols)` for keyword-like identifiers.
 4. Add definition-name matchers with explicit capture groups for names.

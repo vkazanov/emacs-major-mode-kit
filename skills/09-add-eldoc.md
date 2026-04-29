@@ -7,14 +7,14 @@ functions, or forms.
 
 ## When to use
 
-Use after syntax state is reliable and the facts source contains documentation strings or
+Use after syntax state is reliable and the language overview contains documentation strings or
 enough static metadata to derive short documentation.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Facts source when documentation facts need to be updated.
+- Language overview when documentation details need to be updated.
 - Sample files used by Eldoc tests.
 
 ## Built-in Emacs APIs
@@ -29,7 +29,7 @@ enough static metadata to derive short documentation.
 
 ## Requirements
 
-- Store reusable documentation data in the facts source.
+- Store reusable documentation data in the language overview.
 - Define a language-specific function such as `LANG-eldoc-function`.
 - Add the function to `eldoc-documentation-functions` buffer-locally inside
   `define-derived-mode`.
@@ -37,14 +37,14 @@ enough static metadata to derive short documentation.
   return a string quickly, may call `CALLBACK` immediately, or may return `nil` for no
   documentation.
 - Return promptly for no-doc cases.
-- Use only static strings or facts-derived documentation.
+- Use only static strings or documentation derived from the language overview.
 - Return `nil` inside strings or comments unless the language specifically documents
   content there.
 - Do not make network requests, start process objects, or run shell commands.
 
 ## Steps
 
-1. Add documentation facts, such as keyword descriptions or builtin signatures.
+1. Add documentation details, such as keyword descriptions or builtin signatures.
 2. For common static Eldoc shape, adapt `templates/snippets/09-eldoc.md`.
 3. Implement a helper that identifies the symbol at point with `thing-at-point` or
    `bounds-of-thing-at-point`.

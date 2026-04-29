@@ -14,7 +14,7 @@ contains file, line, column, warning, or error locations.
 
 - Generated mode file.
 - Generated test file.
-- Facts source when compilation tool facts need to be updated.
+- Language overview when compilation tool details need to be updated.
 - Sample compilation output fixtures used by tests.
 
 ## Built-in Emacs APIs
@@ -34,7 +34,7 @@ contains file, line, column, warning, or error locations.
 ## Requirements
 
 - Require only the built-in `compile` library when needed.
-- Store compiler or checker commands in the facts source.
+- Store compiler or checker commands in the language overview.
 - Prefer existing entries from `compilation-error-regexp-alist-alist` when they match
   the tool output.
 - Add custom regexps only when built-in compilation patterns are insufficient.
@@ -49,7 +49,7 @@ contains file, line, column, warning, or error locations.
 
 ## Steps
 
-1. Add or confirm tool facts for the compiler, checker, or build command.
+1. Add or confirm tool details for the compiler, checker, or build command.
 2. For common compilation-mode shape, adapt
    `templates/snippets/12-compilation-mode.md`.
 3. Collect representative output lines and identify file, line, column, and severity

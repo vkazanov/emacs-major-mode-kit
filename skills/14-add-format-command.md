@@ -14,7 +14,7 @@ file and write formatted source text to stdout.
 
 - Generated mode file.
 - Generated test file.
-- Facts source when formatter facts need to be updated.
+- Language overview when formatter details need to be updated.
 - Sample files used by format command tests.
 
 ## Built-in Emacs APIs
@@ -33,7 +33,7 @@ file and write formatted source text to stdout.
 
 ## Requirements
 
-- Store the formatter command and arguments in the facts source.
+- Store the formatter command and arguments in the language overview.
 - Define a command such as `LANG-format-buffer` and make it `interactive`.
 - Check the formatter with `executable-find` when the command runs; never run on load.
 - Prefer `call-process-region` for simple synchronous stdin/stdout formatters.
@@ -49,7 +49,7 @@ file and write formatted source text to stdout.
 
 ## Steps
 
-1. Add or confirm formatter facts, including command name and required arguments.
+1. Add or confirm formatter details, including command name and required arguments.
 2. If no formatter command is known, skip this skill and record the reason.
 3. For common stdin/stdout formatter shape, adapt `templates/snippets/14-formatter.md`.
 4. Define a helper that builds the formatter program and argument list without running

@@ -14,7 +14,7 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 
 - Generated mode file.
 - Generated test file.
-- Facts source when comment facts need to be updated.
+- Language overview when comment details need to be updated.
 - Sample files used by comment tests.
 
 ## Built-in Emacs APIs
@@ -34,11 +34,11 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 - Set comment variables buffer-locally inside `define-derived-mode`.
 - Set `comment-start` to the primary line comment opener plus a trailing space when
   appropriate, such as `"// "`. If the language has multiple line comment openers,
-  use the documented primary opener from the facts source or the first line opener
+  use the documented primary opener from the language overview or the first line opener
   supplied by the user.
 - Set `comment-end` to `""` for line comments.
 - Set `comment-start-skip` to match the language's supported comment openers.
-- Cover the common delimiter families directly from facts: `//`, `#`, `--`, `;`,
+- Cover the common delimiter families directly from the overview: `//`, `#`, `--`, `;`,
   `;;`, `/* */`, `<!-- -->`, and documented triple-quote comment/doc delimiters.
 - Set `comment-use-syntax` when syntax table state should guide comment commands.
 - When a delimiter is not yet modeled by syntax state, set `comment-use-syntax` only
@@ -50,7 +50,7 @@ Use after `01-add-syntax-table.md` when the language has comment syntax and
 
 ## Steps
 
-1. Read comment delimiters from the facts source or add them there.
+1. Read comment delimiters from the language overview or add them there.
 2. For common line/block comment variables, adapt
    `templates/snippets/02-comment-variables.md`.
 3. In `define-derived-mode`, set `comment-start`, `comment-end`,

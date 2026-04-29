@@ -16,7 +16,7 @@ headings.
 
 - Generated mode file.
 - Generated test file.
-- Facts source when heading facts need to be recorded.
+- Language overview when heading details need to be recorded.
 - Sample files used by outline tests.
 
 ## Built-in Emacs APIs
@@ -31,7 +31,7 @@ headings.
 
 ## Requirements
 
-- Store reusable heading facts in the facts source when useful.
+- Store reusable heading details in the language overview when useful.
 - Set `outline-regexp` buffer-locally inside `define-derived-mode`.
 - Define and set `outline-level` only when the language has nested heading levels or
   when the heading regexp needs custom level calculation.
@@ -41,8 +41,8 @@ headings.
 
 ## Steps
 
-1. Identify the language's heading forms from the facts source or samples.
-2. Add or update facts for heading regexps and heading level rules.
+1. Identify the language's heading forms from the language overview or samples.
+2. Add or update details for heading regexps and heading level rules.
 3. Define a language-specific regexp such as `LANG-outline-regexp`.
 4. Define `LANG-outline-level` only when a custom level function is needed.
 5. In `define-derived-mode`, set `outline-regexp` and optional `outline-level` with

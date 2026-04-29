@@ -8,14 +8,14 @@ no external process work when the tool is unavailable.
 
 ## When to use
 
-Use after the mode has reliable syntax state and the facts source identifies an external
+Use after the mode has reliable syntax state and the language overview identifies an external
 diagnostic tool or compiler output format for the language.
 
 ## Allowed files
 
 - Generated mode file.
 - Generated test file.
-- Facts source when diagnostic tool facts need to be updated.
+- Language overview when diagnostic tool details need to be updated.
 - Sample files or diagnostic output fixtures used by Flymake tests.
 
 ## Built-in Emacs APIs
@@ -34,7 +34,7 @@ diagnostic tool or compiler output format for the language.
 ## Requirements
 
 - Require only built-in libraries such as `flymake` and `subr-x` when needed.
-- Store the checker or compiler command in the facts source.
+- Store the checker or compiler command in the language overview.
 - Define a language-specific backend such as `LANG-flymake-backend`.
 - Add the backend to `flymake-diagnostic-functions` buffer-locally inside
   `define-derived-mode`.
@@ -54,7 +54,7 @@ diagnostic tool or compiler output format for the language.
 
 ## Steps
 
-1. Add or confirm tool facts for the checker command and diagnostic output format.
+1. Add or confirm tool details for the checker command and diagnostic output format.
 2. For common asynchronous process shape, adapt
    `templates/snippets/11-flymake-process.md`.
 3. Define a buffer-local variable such as `LANG--flymake-process`.
